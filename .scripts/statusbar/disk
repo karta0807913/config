@@ -1,0 +1,49 @@
+#!/bin/sh
+
+# Status bar module for disk space
+# $1 should be drive mountpoint
+# $2 is optional icon, otherwise mountpoint will displayed
+
+# [ -z "$1" ] && exit
+# 
+# icon="$2"
+# [ -z "$2" ] && icon="$1"
+# 
+# case $BLOCK_BUTTON in
+# 	1) pgrep -x dunst >/dev/null && notify-send "<b>💽 Disk space:</b>
+# $(df -h --output=target,used,size)" ;;
+# 	3) pgrep -x dunst >/dev/null && notify-send "<b>💽 Hard drive space remaining:</b>
+# - Shows used hard drive space.
+# - Click to show all disk info." ;;
+# esac
+# 
+# printf "%s: %s" "$icon" "$(df -h "$1" | awk ' /[0-9]/ {print $3 "/" $2}')"
+DIR="${DIR:-$BLOCK_INSTANCE}"
+DIR="${DIR:-$HOME}"
+ALERT_LOW="${ALERT_LOW:-$1}"
+ALERT_LOW="${ALERT_LOW:-10}" # color will turn red under this value (default: 10%)
+
+LOCAL_FLAG="-l"
+if [ "$1" = "-n" ] || [ "$2" = "-n" ]; then
+    LOCAL_FLAG=""
+fi
+
+df -h -P $LOCAL_FLAG "$DIR" | awk -v label="$LABEL" -v alert_low=$ALERT_LOW '
+/\/.*/ {
+	# full text
+    print ": "$5"/100%"
+	# print $5
+	# short text
+	# print $5
+	use=$5
+	# no need to continue parsing
+	exit 0
+}
+END {
+	gsub(/%$/,"",use)
+	if (100 - use < alert_low) {
+		# color
+		print "#FF0000"
+	}
+}
+'
