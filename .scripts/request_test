@@ -1,0 +1,17 @@
+#!/usr/bin/env node
+
+const http = require("http");
+
+http.createServer(function(req, res) {
+    data = ""
+    req.on("data", function(d) {
+        data += d;
+    });
+
+    req.on("end", function() {
+        console.log(req.url);
+        console.log(req.headers);
+        console.log(data);
+        res.end();
+    });
+}).listen(1100);

@@ -1,0 +1,2 @@
+#!/bin/bash 
+xprop -root | grep "_NET_CLIENT_LIST(WINDOW): window id # " | cut -d "#" -f 2 | sed -e 's/,/\n/g' | awk '{ print "WINDOW ID IS "$0; system("xprop -id "$0); }' | awk 'BEGIN{count=1} /WINDOW ID IS/ { print"# "count; count+=1; print }/_NET_WM_PID/ { print } /_GTK_APPLICATION_ID/ { print } /WM_CLASS\(STRING\)/ { print }'

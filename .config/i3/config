@@ -10,10 +10,9 @@ for_window [class="^.*"] border pixel 2
 gaps inner 15
 gaps outer 15
 font pango:monospace 8
-set $FILE "nnn"
-set $BROWSER "/opt/google/chrome/chrome"
-set $term --no-startup-id i3-sensible-terminal
-set $mod Mod1
+set $term --no-startup-id /usr/bin/gnome-terminal
+#i3-sensible-terminal
+set $mod Mod4
 set $stoprec --no-startup-id dmenurecord kill
 set $shutdown sudo -A shutdown -h now
 set $reboot sudo -A reboot
@@ -40,7 +39,7 @@ for_window [instance="dropdown_*"] move position center
 # Starts dunst for notifications:
 # exec --no-startup-id dunst
 # Composite manager:
-# exec --no-startup-id xcompmgr
+exec --no-startup-id compton
 # Runs the key remapping scripts
 # exec --no-startup-id remaps
 # Unclutter makes the mouse invisible after a brief period
@@ -60,7 +59,8 @@ bar {
 
 # #---Basic Bindings---# #
 bindsym $mod+Return 		exec $term
-bindsym $mod+Shift+Return	exec --no-startup-id samedir
+bindsym $mod+Shift+Return	exec gnome-tweak-tool
+#--no-startup-id samedir
 
 bindsym $mod+Shift+space 	floating toggle
 bindsym $mod+space		focus mode_toggle
@@ -88,29 +88,30 @@ bindsym $mod+Shift+q		[con_id="__focused__" instance="^(?!dropdown_).*$"] kill
 bindsym $mod+w			exec $term -e nmtui
 bindsym $mod+Shift+w		exec --no-startup-id $BROWSER
 
-bindsym $mod+e			exec $term -e neomutt && pkill -RTMIN+12 i3blocks
-bindsym $mod+Shift+e		exec --no-startup-id tutorialvids
+# bindsym $mod+e			exec $term -e neomutt && pkill -RTMIN+12 i3blocks
+# bindsym $mod+Shift+e		exec --no-startup-id tutorialvids
 
 bindsym $mod+r 			exec $term -e $FILE
-bindsym $mod+Shift+r		exec --no-startup-id winresize
+# bindsym $mod+Shift+r		exec --no-startup-id winresize
 
 bindsym $mod+t			split toggle
 bindsym $mod+Shift+t		gaps inner current set 15; gaps outer current set 15
 
-bindsym $mod+y			exec $term -e calcurse -D ~/.config/calcurse
+# bindsym $mod+y			exec $term -e calcurse -D ~/.config/calcurse
 bindsym $mod+Shift+y		exec --no-startup-id i3resize left
 
-bindsym $mod+u			exec --no-startup-id ddspawn tmuxdd
+# bindsym $mod+u			exec --no-startup-id ddspawn tmuxdd
 bindsym $mod+Shift+u		exec --no-startup-id i3resize down
 
 bindsym $mod+i 			exec $term -e htop
 bindsym $mod+Shift+i		exec --no-startup-id i3resize up
 
-bindsym $mod+o			sticky toggle
+# bindsym $mod+o			sticky toggle
+bindsym $mod+o              exec --no-startup-id set_default_output
 bindsym $mod+Shift+o		exec --no-startup-id i3resize right
 
-bindsym $mod+p			exec --no-startup-id lmc toggle
-bindsym $mod+Shift+p		exec --no-startup-id lmc pause
+# bindsym $mod+p			exec --no-startup-id lmc toggle
+# bindsym $mod+Shift+p		exec --no-startup-id lmc pause
 
 bindsym $mod+a			exec --no-startup-id ddspawn dropdowncalc -f mono:pixelsize=24
 bindsym $mod+Shift+a		exec $term -e pulsemixer
@@ -161,7 +162,7 @@ bindsym $mod+Shift+b		floating toggle; sticky toggle; exec --no-startup-id hover
 bindsym $mod+n			exec $term -e newsboat && pkill -RTMIN+6 i3blocks
 bindsym $mod+Shift+n		floating toggle; sticky toggle; exec --no-startup-id hover right
 
-bindsym $mod+m 			exec --no-startup-id $term -e ncmpcpp
+bindsym $mod+m 			exec --no-startup-id /usr/bin/mysql-workbench
 bindsym $mod+Shift+m		exec --no-startup-id lmc mute
 
 # #---Workspace Bindings---# #
@@ -275,8 +276,8 @@ bindsym $mod+bracketright 	exec --no-startup-id lmc forward 10
 bindsym $mod+Shift+bracketright exec --no-startup-id lmc forward 120
 
 # For screenshots and recording
-bindsym Print 			exec --no-startup-id maim pic-full-"$(date '+%y%m%d-%H%M-%S').png"
-bindsym Shift+Print 		exec --no-startup-id maimpick
+bindsym Print 			exec --no-startup-id gnome-screenshot -c 
+bindsym Shift+Print 		exec --no-startup-id "maim --select | xclip -selection clipboard -t image/png"
 bindsym $mod+Print		exec --no-startup-id dmenurecord
 bindsym $mod+Scroll_Lock	exec --no-startup-id "killall screenkey || screenkey"
 bindsym $mod+Delete		exec $stoprec

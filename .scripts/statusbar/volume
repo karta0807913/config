@@ -1,26 +1,66 @@
 #!/bin/sh
 
+DEFAULT_DEVICE=$(pactl info | awk '/Default Sink: /{ print$3 }')
+
 case $BLOCK_BUTTON in
-	1) setsid "$TERMINAL" -e pulsemixer & ;;
-	2) pulsemixer --toggle-mute ;;
-	4) pulsemixer --change-volume +5 ;;
-	5) pulsemixer --change-volume -5 ;;
-	3) pgrep -x dunst >/dev/null && notify-send "<b>📢 Volume module:</b>
-- Shows volume 🔊, 🔇 if muted.
-- Middle click to mute.
-- Scroll to change."
+ 	4) pactl set-sink-volume $DEFAULT_DEVICE +5% ;;
+ 	5) pactl set-sink-volume $DEFAULT_DEVICE -5% ;;
 esac
+volume=$(pactl list sinks | grep -oP "Name.*|\tVolume: .*" | python -c "
+import sys
+i = 0
+str=''
+for s in sys.stdin:
+ if i == 2:
+  print(str.replace('\n', ''))
+  str = ''
+  i = 0
+ str += s
+ i += 1
+print(str.replace('\n', ''))
+" | awk "/$DEFAULT_DEVICE/{ print \$7 }" | sed -e "s/%//")
 
-[ "$(pulsemixer --get-mute)" = "1" ] && printf "🔇\\n" && exit
+volume_bar = "";
+for i in $(seq 1 10);
+do
+    if [ "$volume" -ge $((i*10)) ];
+    then
+        volume_bar="$volume_bar⬛";
+    else
+        volume_bar="$volume_bar□";
+    fi
+done;
 
-vol=$(pulsemixer --get-volume | awk '{print $1}')
-
-if [ "$vol" -gt "70" ]; then
-	icon="🔊"
-elif [ "$vol" -lt "30" ]; then
-	icon="🔈"
+if [ "$volume" -eq 0 ];
+then
+    echo "🔇  "" "$volume_bar" "$volume"%"
+elif [ "$volume" -lt 40 ];
+then
+    echo "🔉  "$volume_bar" "$volume"%"
 else
-	icon="🔉"
+    echo "🔊  "$volume_bar" "$volume"%"
 fi
-
-printf "%s %s%%\\n" "$icon" "$vol"
+# case $BLOCK_BUTTON in
+# 	1) setsid "$TERMINAL" -e pulsemixer & ;;
+# 	2) pulsemixer --toggle-mute ;;
+# 	4) pulsemixer --change-volume +5 ;;
+# 	5) pulsemixer --change-volume -5 ;;
+# 	3) pgrep -x dunst >/dev/null && notify-send "<b>📢 Volume module:</b>
+# - Shows volume 🔊, 🔇 if muted.
+# - Middle click to mute.
+# - Scroll to change."
+# esac
+# 
+# [ "$(pulsemixer --get-mute)" = "1" ] && printf "🔇\\n" && exit
+# 
+# vol=$(pulsemixer --get-volume | awk '{print $1}')
+# 
+# if [ "$vol" -gt "70" ]; then
+# 	icon="🔊"
+# elif [ "$vol" -lt "30" ]; then
+# 	icon="🔈"
+# else
+# 	icon="🔉"
+# fi
+# 
+# printf "%s %s%%\\n" "$icon" "$vol"

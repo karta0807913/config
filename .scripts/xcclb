@@ -1,0 +1,8 @@
+#!/bin/bash
+input=$(< /dev/stdin)
+if [ "$1" == "s" ];
+then
+    replace=" \\"$'\n'
+    input=${input//$'\n'/$replace}
+fi
+echo -n "$input" | xclip -selection clipboard

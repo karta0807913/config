@@ -1,0 +1,2 @@
+#!/bin/sh
+pactl list short sinks | awk -F "\t" '{ print $2 }' | dmenu -p "Select Default Output" | xargs -i pactl set-default-sink {}

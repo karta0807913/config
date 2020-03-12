@@ -1,0 +1,15 @@
+#!/usr/bin/env python
+import json
+import sys
+
+m={}
+for index in range(1, len(sys.argv), 1):
+    val = sys.argv[index].split("=")
+    if len(val) == 1:
+        m[sys.argv[index]] = ""
+    elif val[1] == "None":
+        m[val[0]] = None
+    else:
+        m[val[0]] = val[1]
+
+print(json.dumps(m))

@@ -2,10 +2,10 @@ command=~/.scripts/statusbar/$BLOCK_NAME
 separator_block_width=15
 markup=pango
 
-[record]
-command=cat /tmp/recordingicon
-interval=once
-signal=9
+# [record]
+# command=cat /tmp/recordingicon
+# interval=once
+# signal=9
 
 # [music]
 # label=🎼
@@ -61,6 +61,16 @@ label=🏠HOME
 # [battery]
 # command=battery BAT0
 # interval=5
+
+[ip]
+label=IP: 
+command=echo $(curl "ifconfig.me/ip")
+interval=60
+
+# [test]
+# label=test
+# command=echo "Button=$button, x=$relative_x, y=$relative_y"
+# interval=once
 
 [clock]
 label=📅

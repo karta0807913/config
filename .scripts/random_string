@@ -1,0 +1,2 @@
+#!/bin/sh
+cat /dev/urandom | tr -cd [:print:] | head --bytes=$1
