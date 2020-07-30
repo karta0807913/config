@@ -1,0 +1,54 @@
+#!/bin/bash
+set -e
+
+filename=""
+durning=""
+delay=""
+
+while [ "$#" -gt 0 ];
+do
+    case "$1" in
+        -d)
+            durning="$2"
+            shift
+            shift
+            ;;
+        --delay)
+            delay="$2"
+            shift
+            shift
+            ;;
+        [^-]*)
+            filename="$1"
+            shift
+            ;;
+        --)
+            filename="$2"
+            break
+            ;;
+        *)
+            echo "unknow arguments $1"
+            exit 1
+            ;;
+    esac
+done
+
+durning="${durning:-10}"
+delay="${delay:-1}"
+filename="${filename:-"out.gif"}"
+
+position="$(slop -o -f "--x=%x --y=%y --width=%w --height=%h")"
+
+(byzanz-record ${position} --delay="$delay" -e "sleep $durning" "$filename") &
+record_pid="$!"
+
+read -p "Press enter to stop recording
+" -t "$durning"
+
+echo "interrupt by user";
+subprocess="$(pgrep -P "$record_pid")"
+
+if [ "$subprocess" != "" ]; then
+    kill "$(pgrep -P "$record_pid")";
+fi
+wait

@@ -1,0 +1,43 @@
+#!/bin/bash
+
+which pdftk > /dev/null
+if [ "$?" != "0" ];
+then
+    echo "please install pdftk";
+    exit 1;
+fi
+
+if [ "$#" != "1" ];
+then
+    echo "usage $0 <pdf file>"
+    exit 1
+fi
+
+if [ "$1" == "-h" ];
+then
+    echo "usage $0 <pdf file>"
+    exit 1
+fi
+
+if [ ! -f "$1" ];
+then
+    echo "file not exist"
+    echo "usage $0 <pdf file>"
+    exit 1
+fi
+
+pdftk "$1" burst
+if [ "$?" -ne "0" ];
+then
+    read -s -p "please input pdf password: " password
+    echo ""
+    pdftk "$1" input_pw "$password" burst
+    if [ "$?" -ne "0" ];
+    then
+        echo "password error";
+        exit 1
+    fi
+fi
+set -e
+convert -density 288 pg_????.pdf +adjoin -quality 100 -size 3000x4000 "$(echo "$1" | sed 's/\.pdf$//').jpg"
+echo "done"

@@ -1,0 +1,43 @@
+#!/bin/bash
+set -e
+client_id="93de44873996cca"
+
+setting_path="$(dirname "$0")/.imgur_setting"
+
+if [ ! -f "$setting_path" ]; then
+    echo "please login your account by access this website:
+https://api.imgur.com/oauth2/authorize?client_id=$client_id&response_type=token&state=abc"
+    read -p "input the response url: " URL;
+    access_token="$(grep -E -o "access_token=[a-z0-9]*" <<< "$URL" | cut -d= -f2)"
+    refresh_token="$(grep -E -o "refresh_token=[a-z0-9]*" <<< "$URL" | cut -d= -f2)"
+    if [ "$access_token" = "" ] || [ "$refresh_token" = "" ]; then
+        echo "login failed"
+        exit 127
+    fi
+    echo "access_token='$access_token'
+refresh_token='$refresh_token'" > "$setting_path" 
+    echo "setting success"
+fi
+
+source "$setting_path"
+
+if [ ! "$#" = "0" ] && [ ! "$#" = "1" ];
+then
+    echo "usage $(basename "$0") [filename]"
+    exit 127
+fi
+
+result=""
+if [ "$#" = "0" ] || [ "$1" = "-" ]; then
+    result="$(curl -s --location --request POST 'https://api.imgur.com/3/image' \
+        --header "Authorization: Bearer $access_token" \
+        --form "image=@/dev/stdin")"
+else
+    result="$(curl -s --location --request POST 'https://api.imgur.com/3/image' \
+        --header "Authorization: Bearer $access_token" \
+        --form "image=@$1" \
+        --form "name=$(basename "$1")" \
+        --form "type=$(file "$1" -b --mime-type)")"
+fi
+
+echo "$result"

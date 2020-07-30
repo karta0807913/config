@@ -33,8 +33,6 @@ Plugin 'scrooloose/nerdtree'
 Plugin 'terryma/vim-multiple-cursors'
 Plugin 'junegunn/fzf.vim'
 Plugin 'tpope/vim-surround'
-Plugin 'rust-lang/rust.vim'
-
 
 " Plugin 'flazz/vim-colorschemes'
 " Plugin 'morhetz/gruvbox'

@@ -21,17 +21,7 @@ if [ -d "$HOME/bin" ] ; then
     PATH="$HOME/bin:$PATH"
 fi
 
-export PATH="$HOME/.cargo/bin:$PATH"
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/.scripts:$PATH"
-
-export GOROOT="$HOME/.local/go"
-export TERMINAL="/usr/bin/gnome-terminal"
-export BROWSER="/usr/lib/chromium-browser/chromium-browser"
 export FILE="nnn"
 export EDITOR="vim"
-sudo -n loadkeys ~/.scripts/ttymaps.kmap 2>/dev/null
-xmodmap ~/.scripts/xmaps.map > /dev/null 2>&1
-xrandr --output HDMI-0 --mode 2560x1080
-feh --bg-max --random ~/.wallpaper/
+export SUDO_ASKPASS="$HOME/.scripts/dmenupass"
 

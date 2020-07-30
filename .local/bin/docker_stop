@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -e
+
+if [ $EUID -ne 0 ]
+then
+    sudo "$0" "$@"
+    exit "$?"
+fi
+
+CONTAINER_NAME="$(docker container ls --format '{{ .Names }} ({{ .Status }})' | \
+        dmenu -i -p "Select container to stop")"
+read <<< "$CONTAINER_NAME" CONTAINER_NAME STAT
+
+notify-send "try stop $CONTAINER_NAME"
+
+if [ "$(docker stop "$CONTAINER_NAME")" ]
+then
+    notify-send "$CONTAINER_NAME stopped"
+else
+    stat="$?"
+    notify-send "stop $CONTAINER_NAME failed"
+    exit "$stat"
+fi
