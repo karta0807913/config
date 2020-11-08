@@ -10,6 +10,7 @@ if ! lsb_release --id | grep "Ubuntu" > /dev/null; then
     exit 1
 fi
 
+
 if ! which docker > /dev/null ; then
     set -e
     # install docker
@@ -49,7 +50,7 @@ fi
 sudo add-apt-repository -y ppa:kelleyk/emacs
 sudo add-apt-repository -y ppa:kgilmer/speed-ricer
 curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb > /tmp/chrome.deb
-sudo apt install -y i3-gaps-wm i3blocks feh compton maim htop /tmp/chrome.deb gcc emacs27
+sudo apt install -y i3-gaps-wm i3blocks feh compton maim htop /tmp/chrome.deb gcc emacs27 font-manager
 
 git clone https://github.com/karta0807913/config.git /tmp/config
 cd /tmp/config/.local/bin/statusbar/
@@ -65,5 +66,13 @@ echo ":VundleInstall" | vim
 
 git clone https://github.com/karta0807913/emacs.d.git ~/.emacs.d
 cp ~/.emacs.d/.custom.el ~/
+
+curl -L https://github.com/microsoft/cascadia-code/releases/download/v2009.22/CascadiaCode-2009.22.zip > /tmp/CascadiaCode.zip
+cd /tmp
+unzip CascadiaCode.zip
+cd -
+
+font-manager -i /tmp/ttf/CascadiaCode.ttf
+dconf load /org/gnome/terminal/legacy/profiles:/ < /tmp/config/gnome-terminal-profiles.dconf
 
 echo "install finish, please login again"
