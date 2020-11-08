@@ -1,0 +1,21 @@
+#!/bin/bash
+
+case $BLOCK_BUTTON in
+    1)
+        notify-send "🐳 current running" "$(cat <<EOF
+$(docker ps --format '<div>{{ .Names }}\t{{ .Status }}</div>')
+EOF
+)"
+        ;;
+    3)
+        set -e
+        echo ""
+        select="$(echo $'start\nstop' | dmenu -i -p "start or stop a container")"
+        if [ "$select" = "start" ];then
+            docker_exec
+        else
+            docker_stop
+        fi
+        ;;
+esac
+echo ""

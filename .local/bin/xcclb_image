@@ -1,2 +1,6 @@
 #!/bin/bash
-cat /dev/stdin | xclip -selection clipboard -t image/png
+if [ "$1" = "-o" ]; then
+    xclip -selection clipboard -t image/png -o
+else
+    cat /dev/stdin | xclip -selection clipboard -t image/png
+fi

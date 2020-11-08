@@ -40,6 +40,8 @@ for_window [instance="dropdown_*"] move position center
 # exec --no-startup-id dunst
 # Composite manager:
 exec --no-startup-id compton
+# Start notify daemon dunst
+exec --no-startup-id dunst
 # Runs the key remapping scripts
 # exec --no-startup-id remaps
 # Unclutter makes the mouse invisible after a brief period
@@ -243,8 +245,8 @@ bindsym $mod+F5		exec --no-startup-id $netrefresh
 bindsym $mod+F6		exec --no-startup-id torwrap
 bindsym $mod+F7		exec --no-startup-id td-toggle
 bindsym $mod+F8		exec --no-startup-id ~/.config/mutt/etc/mailsync.sh
-bindsym $mod+F9		exec --no-startup-id dmenumount
-bindsym $mod+F10	exec --no-startup-id dmenuumount
+bindsym $mod+F9		exec --no-startup-id dmount
+bindsym $mod+F10	exec --no-startup-id dumount
 bindsym $mod+F11	exec --no-startup-id ducksearch
 bindsym $mod+F12	exec $term -e nmtui
 
@@ -277,7 +279,7 @@ bindsym $mod+Shift+bracketright exec --no-startup-id lmc forward 120
 
 # For screenshots and recording
 bindsym Print 			exec --no-startup-id gnome-screenshot -c 
-bindsym Shift+Print 		exec --no-startup-id "maim --select | xclip -selection clipboard -t image/png"
+bindsym Shift+Print 		exec --no-startup-id "maim -o --select | xclip -selection clipboard -t image/png"
 bindsym $mod+Print		exec --no-startup-id dmenurecord
 bindsym $mod+Scroll_Lock	exec --no-startup-id "killall screenkey || screenkey"
 bindsym $mod+Delete		exec $stoprec

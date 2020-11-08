@@ -23,5 +23,6 @@ fi
 
 export FILE="nnn"
 export EDITOR="vim"
-export SUDO_ASKPASS="$HOME/.scripts/dmenupass"
+export BROWSER="chrome"
+export SUDO_ASKPASS="$HOME/.local/bin/dmenupass"
 

@@ -2,16 +2,10 @@
 
 set -e
 
-if [ $EUID -ne 0 ];
-then
-    sudo "$0" "$@"
-    exit "$?"
-fi
-
 OPERATION_LIST="(start)
 (start -ia)
 (start && exec -it)
-(start -ia && exec --it)"
+(start -ia && exec -it)"
 
 function start_container() {
     notify-send "try start $CONTAINER_NAME"
