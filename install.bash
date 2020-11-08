@@ -73,6 +73,7 @@ unzip CascadiaCode.zip
 cd -
 
 font-manager -i /tmp/ttf/CascadiaCode.ttf
+fc-cache -f -v
 dconf load /org/gnome/terminal/legacy/profiles:/ < /tmp/config/gnome-terminal-profiles.dconf
 
 echo "install finish, please login again"
