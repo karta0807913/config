@@ -56,7 +56,7 @@ signal=10
 [disk]
 interval=60
 label=🏠HOME
-# command=disk /home 🏠
+markup=pango
 
 # [battery]
 # command=battery BAT0
