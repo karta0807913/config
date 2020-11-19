@@ -90,9 +90,6 @@ bindsym $mod+Shift+q		[con_id="__focused__" instance="^(?!dropdown_).*$"] kill
 bindsym $mod+w			exec $term -e nmtui
 bindsym $mod+Shift+w		exec --no-startup-id $BROWSER
 
-# bindsym $mod+e			exec $term -e neomutt && pkill -RTMIN+12 i3blocks
-# bindsym $mod+Shift+e		exec --no-startup-id tutorialvids
-
 bindsym $mod+r 			exec $term -e $FILE
 # bindsym $mod+Shift+r		exec --no-startup-id winresize
 
@@ -237,17 +234,11 @@ for_window [title="mpvfloat"] border pixel 0
 no_focus [title="mpvfloat"]
 
 # #---Function Buttons---# #
-bindsym $mod+F1		exec --no-startup-id groff -kejpt -mom ~/.local/share/larbs/readme.mom -Tpdf | zathura -
 bindsym $mod+F2		restart
-bindsym $mod+F3		exec --no-startup-id displayselect
 bindsym $mod+F4		exec --no-startup-id prompt "Hibernate computer?" "$hibernate"
 bindsym $mod+F5		exec --no-startup-id $netrefresh
-bindsym $mod+F6		exec --no-startup-id torwrap
-bindsym $mod+F7		exec --no-startup-id td-toggle
-bindsym $mod+F8		exec --no-startup-id ~/.config/mutt/etc/mailsync.sh
 bindsym $mod+F9		exec --no-startup-id dmount
 bindsym $mod+F10	exec --no-startup-id dumount
-bindsym $mod+F11	exec --no-startup-id ducksearch
 bindsym $mod+F12	exec $term -e nmtui
 
 # #---Arrow Keys---# #
@@ -262,14 +253,15 @@ bindsym $mod+Shift+Right 	move right
 
 # #---Media Keys---# #
 # Volume keys
-bindsym $mod+plus		exec --no-startup-id lmc up 5
-bindsym $mod+Shift+plus		exec --no-startup-id lmc up 15
-bindsym $mod+minus 		exec --no-startup-id lmc down 5
-bindsym $mod+Shift+minus	exec --no-startup-id lmc down 15
-bindsym $mod+less 		exec --no-startup-id lmc prev
-bindsym $mod+Shift+less		exec --no-startup-id lmc replay
-bindsym $mod+greater		exec --no-startup-id lmc next
-bindsym $mod+Shift+greater	exec --no-startup-id lmc next
+bindsym $mod+plus		exec --no-startup-id pactl set-sink-volume "$(pactl info | awk '/Default Sink: /{ print$3 }')" +5%
+bindsym $mod+Shift+plus		exec --no-startup-id pactl set-sink-volume "$(pactl info | awk '/Default Sink: /{ print$3 }')" +15%
+bindsym $mod+minus 		exec --no-startup-id pactl set-sink-volume "$(pactl info | awk '/Default Sink: /{ print$3 }')" -5%
+bindsym $mod+Shift+minus	exec --no-startup-id pactl set-sink-volume "$(pactl info | awk '/Default Sink: /{ print$3 }')" -15%
+
+# For music controll
+bindsym $mod+less 	exec --no-startup-id playerctl next
+bindsym $mod+greater 	exec --no-startup-id playerctl previous
+bindsym $mod+p 	exec --no-startup-id playerctl play-pause
 
 # For advancing forward/backward in an mpd song
 bindsym $mod+bracketleft 	exec --no-startup-id lmc back 10
@@ -279,7 +271,7 @@ bindsym $mod+Shift+bracketright exec --no-startup-id lmc forward 120
 
 # For screenshots and recording
 bindsym Print 			exec --no-startup-id gnome-screenshot -c 
-bindsym Shift+Print 		exec --no-startup-id "maim -o --select | xclip -selection clipboard -t image/png"
+bindsym Shift+Print 		exec --no-startup-id maim -o --select | xclip -selection clipboard -t image/png
 bindsym $mod+Print		exec --no-startup-id dmenurecord
 bindsym $mod+Scroll_Lock	exec --no-startup-id "killall screenkey || screenkey"
 bindsym $mod+Delete		exec $stoprec
@@ -367,4 +359,3 @@ bindsym XF86Documents		exec $term -e $FILE ~/Documents
 ##bindsym XF86Battery		exec
 ##bindsym XF86Bluetooth		exec
 bindsym XF86WLAN		exec $netrefresh
-
