@@ -37,6 +37,11 @@ elif [ "$usage" -gt "70" ]; then
     color="#d8d800"
 fi
 
+if [ "$1" = "poly" ]; then
+    echo "%{F${color}}${usage}%{F-}%{F#00CCCC}/%{F-}100%"
+    exit 0
+fi
+
 cat <<EOF
-: <span color="$color">${usage}%</span>/100%
+: <span color="$color">${usage}%</span><span color="#00CCCC">/</span>100%
 EOF

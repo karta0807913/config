@@ -37,11 +37,9 @@ for_window [instance="dropdown_*"] move position center
 # Setting the background:
 # exec --no-startup-id setbg
 # Starts dunst for notifications:
-# exec --no-startup-id dunst
+exec --no-startup-id dunst
 # Composite manager:
 exec --no-startup-id compton
-# Start notify daemon dunst
-exec --no-startup-id dunst
 # Runs the key remapping scripts
 # exec --no-startup-id remaps
 # Unclutter makes the mouse invisible after a brief period
@@ -51,13 +49,15 @@ exec --no-startup-id dunst
 # Podboat automatic queue and download
 # exec_always --no-startup-id podentr
 
-bar {
-	font pango:mono 10
-	status_command i3blocks
-	position top
-	mode dock
-	modifier None
-}
+exec --no-startup-id (killall polybar; for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do MONITOR=$m polybar example & done)
+
+# bar {
+# 	font pango:mono 10
+# 	status_command i3blocks
+# 	position top
+# 	mode dock
+# 	modifier None
+# }
 
 # #---Basic Bindings---# #
 bindsym $mod+Return 		exec $term
@@ -118,8 +118,8 @@ bindsym $mod+Shift+a		exec $term -e pulsemixer
 bindsym $mod+s			gaps inner current plus 5
 bindsym $mod+Shift+s		gaps inner current minus 5
 
-bindsym $mod+d			exec --no-startup-id dmenu_run
-bindsym $mod+Shift+d		gaps inner current set 0; gaps outer current set 0
+bindsym $mod+d			exec --no-startup-id rofi -show run
+bindsym $mod+Shift+d			exec --no-startup-id launcher
 
 set $freeze Distraction-free mode (super+shift+f to reactivate bindings)
 mode "$freeze" { bindsym $mod+Shift+f mode "default"

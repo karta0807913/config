@@ -19,7 +19,9 @@ if ! which docker > /dev/null ; then
         ca-certificates \
         curl \
         gnupg-agent \
-        software-properties-common
+        software-properties-common \
+        polybar \
+        rofi
 
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
     sudo add-apt-repository \
