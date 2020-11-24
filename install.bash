@@ -19,9 +19,7 @@ if ! which docker > /dev/null ; then
         ca-certificates \
         curl \
         gnupg-agent \
-        software-properties-common \
-        polybar \
-        rofi
+        software-properties-common
 
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
     sudo add-apt-repository \
@@ -52,7 +50,7 @@ fi
 sudo add-apt-repository -y ppa:kelleyk/emacs
 sudo add-apt-repository -y ppa:kgilmer/speed-ricer
 curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb > /tmp/chrome.deb
-sudo apt install -y i3-gaps-wm i3blocks feh compton maim htop /tmp/chrome.deb gcc emacs27 font-manager playerctl
+sudo apt install -y i3-gaps-wm i3blocks feh compton maim htop /tmp/chrome.deb gcc emacs27 font-manager playerctl polybar rofi
 
 git clone https://github.com/karta0807913/config.git /tmp/config
 cd /tmp/config/.local/bin/statusbar/

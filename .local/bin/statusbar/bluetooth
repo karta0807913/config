@@ -1,0 +1,56 @@
+#!/bin/bash
+
+if [ "$BLOCK_BUTTON" = "" ]; then
+    echo "🎧"
+    exit 0
+fi
+
+function get_python() {
+    if which python3 > /dev/null; then
+        if python3 -c "import dbus" 2>&1 > /dev/null; then
+            echo "python3"
+            return 0
+        fi
+    fi
+    if which python > /dev/null; then
+        if python -c "import dbus" 2>&1 > /dev/null; then
+            echo "python"
+        fi
+    fi
+    return 0
+}
+
+function get_bluez_devices() {
+    python="$1"
+    $python -c '
+import dbus
+system = dbus.SystemBus()
+root = system.get_object("org.bluez", "/")
+obs = dbus.Interface(root, dbus_interface="org.freedesktop.DBus.ObjectManager")
+managed_objects = obs.GetManagedObjects()
+for key in managed_objects:
+    if key.split("/")[-1].find("dev") != -1:
+        obj = managed_objects[key]["org.bluez.Device1"]
+        status="Disconnected"
+        if obj["Connected"] == 1:
+            status="Connected"
+        print(obj["Address"], status, obj["Name"])
+'
+}
+
+PYTHON="$(get_python)"
+if [ PYTHON = "" ]; then
+    echo "need python and dbus-python"
+    exit 1
+fi
+
+Device=$(get_bluez_devices $PYTHON | rofi -dmenu -i -p "Connect Bluetooth Devices")
+read Address Connected Others <<<${Device}
+instruction="connect"
+if [ "$Connected" = "Connected" ]; then
+    instruction="disconnect"
+fi
+bluetoothctl <<EOF > /dev/null
+${instruction} ${Address}
+EOF
+echo "🎧"

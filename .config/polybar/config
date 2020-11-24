@@ -1,26 +1,6 @@
-;==========================================================
-;
-;
-;   ██████╗  ██████╗ ██╗  ██╗   ██╗██████╗  █████╗ ██████╗
-;   ██╔══██╗██╔═══██╗██║  ╚██╗ ██╔╝██╔══██╗██╔══██╗██╔══██╗
-;   ██████╔╝██║   ██║██║   ╚████╔╝ ██████╔╝███████║██████╔╝
-;   ██╔═══╝ ██║   ██║██║    ╚██╔╝  ██╔══██╗██╔══██║██╔══██╗
-;   ██║     ╚██████╔╝███████╗██║   ██████╔╝██║  ██║██║  ██║
-;   ╚═╝      ╚═════╝ ╚══════╝╚═╝   ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝
-;
-;
-;   To learn more about how to configure Polybar
-;   go to https://github.com/polybar/polybar
-;
-;   The README contains a lot of information
-;
-;==========================================================
-
 [colors]
-;background = ${xrdb:color0:#222}
 background = #222
 background-alt = #444
-;foreground = ${xrdb:color7:#222}
 foreground = #dfdfdf
 foreground-alt = #555
 primary = #ffb52a
@@ -57,7 +37,7 @@ font-2 = Noto Sans CJK HK:style=Regular:size=10;1
 
 modules-left = i3
 modules-center = date
-modules-right = memory cpu pulseaudio disk screen-recorder docker
+modules-right = memory cpu pulseaudio disk screen-recorder bluetooth docker
 
 tray-position = right
 tray-padding = 2
@@ -147,8 +127,8 @@ bar-volume-empty-foreground = ${colors.foreground-alt}
 
 [module/screen-recorder]
 type = custom/ipc
-hook-0 = ~/.scripts/statusbar/screen_gif
-hook-1 = BLOCK_BUTTON=1 ~/.scripts/statusbar/screen_gif
+hook-0 = ~/.local/bin/statusbar/screen_gif
+hook-1 = BLOCK_BUTTON=1 ~/.local/bin/statusbar/screen_gif
 click-left = polybar-msg -p %pid% hook screen-recorder 2
 initial = 1
 
@@ -156,7 +136,7 @@ initial = 1
 type = custom/script
 interval=60
 label=🏠HOME %output%
-exec= ~/.scripts/statusbar/disk poly
+exec= ~/.local/bin/statusbar/disk poly
 
 [module/ip]
 type = custom/script
@@ -172,10 +152,10 @@ exec=date '+%Y/%m/%d (%a) %I:%M%p'
 
 [module/memory]
 type = custom/script
-interval=30
+interval=3
 label=RAM %output%
-exec=~/.scripts/statusbar/memory
-click-left= BLOCK_BUTTON=1 ~/.scripts/statusbar/memory
+exec=~/.local/bin/statusbar/memory
+click-left= BLOCK_BUTTON=1 ~/.local/bin/statusbar/memory
 
 [module/cpu]
 type = internal/cpu
@@ -185,6 +165,12 @@ label = 💻cpu %percentage:4%%
 [module/docker]
 type = custom/script
 exec = echo "empty"
-click-left = BLOCK_BUTTON=1 ~/.scripts/statusbar/docker
-click-right = BLOCK_BUTTON=3 ~/.scripts/statusbar/docker
+click-left = BLOCK_BUTTON=1 ~/.local/bin/statusbar/docker
+click-right = BLOCK_BUTTON=3 ~/.local/bin/statusbar/docker
 label=🐳
+
+[module/bluetooth]
+type = custom/script
+exec = echo "empty"
+click-left = BLOCK_BUTTON=1 ~/.local/bin/statusbar/bluetooth
+label=🎧
