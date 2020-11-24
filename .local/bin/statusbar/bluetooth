@@ -45,11 +45,12 @@ if [ PYTHON = "" ]; then
 fi
 
 Device=$(get_bluez_devices $PYTHON | rofi -dmenu -i -p "Connect Bluetooth Devices")
-read Address Connected Others <<<${Device}
+read Address Connected Name <<<${Device}
 instruction="connect"
 if [ "$Connected" = "Connected" ]; then
     instruction="disconnect"
 fi
+notify-send "Bluetooth" "Try to ${instruction} ${Name}"
 bluetoothctl <<EOF > /dev/null
 ${instruction} ${Address}
 EOF
