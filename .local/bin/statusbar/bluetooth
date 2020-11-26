@@ -45,6 +45,11 @@ if [ PYTHON = "" ]; then
 fi
 
 Device=$(get_bluez_devices $PYTHON | rofi -dmenu -i -p "Connect Bluetooth Devices")
+
+if ! [ "$?" = "0" ]; then
+    exit 1
+fi
+
 read Address Connected Name <<<${Device}
 instruction="connect"
 if [ "$Connected" = "Connected" ]; then
