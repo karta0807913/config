@@ -40,6 +40,8 @@ for_window [instance="dropdown_*"] move position center
 exec --no-startup-id dunst
 # Composite manager:
 exec --no-startup-id compton
+# numlock
+exec --no-startup-id numlockx on
 # Runs the key remapping scripts
 # exec --no-startup-id remaps
 # Unclutter makes the mouse invisible after a brief period
@@ -146,8 +148,8 @@ bindsym $mod+Shift+l		move right 30
 bindsym $mod+z			gaps outer current plus 5
 bindsym $mod+Shift+z		gaps outer current minus 5
 
-bindsym $mod+x			exec --no-startup-id mpc pause; exec --no-startup-id pauseallmpv ; exec --no-startup-id i3lock -e -f -c 1d2021
-bindsym $mod+Shift+x		exec --no-startup-id prompt "Shutdown computer?" "$shutdown"
+bindsym $mod+x			exec --no-startup-id playerctl pause; exec --no-startup-id i3lock -e -f -c 000000
+bindsym $mod+Shift+x		exec --no-startup-id i3lock -e -f -c 000000
 
 bindsym $mod+c			exec --no-startup-id cabl
 bindsym $mod+Shift+c		exec --no-startup-id camtoggle
@@ -234,7 +236,7 @@ for_window [title="mpvfloat"] border pixel 0
 no_focus [title="mpvfloat"]
 
 # #---Function Buttons---# #
-bindsym $mod+F2		restart
+bindsym $mod+F2		exec --no-startup-id polybar-msg cmd restart; restart
 bindsym $mod+F4		exec --no-startup-id prompt "Hibernate computer?" "$hibernate"
 bindsym $mod+F5		exec --no-startup-id $netrefresh
 bindsym $mod+F9		exec --no-startup-id dmount
