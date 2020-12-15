@@ -74,8 +74,22 @@ cd /tmp
 unzip CascadiaCode.zip
 cd -
 
+# set font and gnome terminal theme
 font-manager -i /tmp/ttf/CascadiaCode.ttf
 fc-cache -f -v
 dconf load /org/gnome/terminal/legacy/profiles:/ < /tmp/config/gnome-terminal-profiles.dconf
+
+# add i3 configure
+cat<<EOF | sudo tee /usr/share/xsessions/i3.desktop
+[Desktop Entry]
+Name=i3
+Comment=improved dynamic tiling window manager
+Exec=i3
+TryExec=i3
+Type=Application
+X-LightDM-DesktopName=i3
+DesktopNames=i3
+Keywords=tiling;wm;windowmanager;window;manager;
+EOF
 
 echo "install finish, please login again"
