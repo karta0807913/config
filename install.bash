@@ -78,6 +78,8 @@ cd -
 font-manager -i /tmp/ttf/CascadiaCode.ttf
 fc-cache -f -v
 dconf load /org/gnome/terminal/legacy/profiles:/ < /tmp/config/gnome-terminal-profiles.dconf
+# hide menubar
+gsettings set org.gnome.Terminal.Legacy.Settings default-show-menubar false
 
 # add i3 configure
 cat<<EOF | sudo tee /usr/share/xsessions/i3.desktop
