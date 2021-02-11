@@ -1,0 +1,70 @@
+#!/bin/bash
+
+if ! which acpi_listen 2> /dev/null > /dev/null; then
+    echo "acpi_listen not found"
+    exit 1
+fi
+
+function poweroff() {
+    if [ "$(echo $'yes\nno' | rofi -dmenu -i -p "Shutdown?" -only-match)" = "yes" ]; then
+        systemctl poweroff
+    fi
+}
+
+function lock() {
+    playerctl pause > /dev/null 2>/dev/null
+    i3lock -e -f -c 000000 2>/dev/null
+}
+
+function current_screen() {
+    i3-msg -t get_workspaces | python3 -c 'import json; import sys;
+for l in json.load(sys.stdin):
+    if l["focused"]:
+        print(l["output"])'
+}
+
+function get_brightless() {
+    xrandr --verbose | grep "$1" -A 10 | grep "Brightness" | awk '{ print $2 }'
+}
+
+while key=$(acpi_listen -c 1); do
+    read instruction others <<<"$key"
+    case "$instruction" in
+        button/lid)
+            read device action <<<"$others"
+            if [ "$action" = "close" ]; then
+                lock
+            fi
+            ;;
+        button/sleep)
+            lock
+            systemctl suspend
+            ;;
+        button/power)
+            poweroff
+            ;;
+        button/mute)
+            pactl set-sink-mute "$(pactl info | awk '/Default Sink: /{ print$3 }')" toggle
+            ;;
+        video/brightnessdown)
+            SCREEN="$(current_screen)"
+            BRIGHTLESS="$(get_brightless "$SCREEN")"
+            BRIGHTLESS=$(echo "$BRIGHTLESS - 0.05" | bc)
+
+            if [ "$(echo "$BRIGHTLESS < 0" | bc)" = "1" ]; then
+                BRIGHTLESS="0.05"
+            fi
+
+            xrandr --output "$SCREEN" --brightness "$BRIGHTLESS"
+            ;;
+        video/brightnessup)
+            SCREEN="$(current_screen)"
+            BRIGHTLESS="$(get_brightless "$SCREEN")"
+            BRIGHTLESS=$(echo "$BRIGHTLESS + 0.05" | bc)
+            if [ "$(echo "$BRIGHTLESS > 1" | bc)" = "1" ]; then
+                BRIGHTLESS=1
+            fi
+            xrandr --output "$SCREEN" --brightness $BRIGHTLESS
+            ;;
+    esac
+done

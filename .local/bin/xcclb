@@ -15,4 +15,3 @@ then
     input=${input//$'\n'/$replace}
 fi
 echo -n "$input" | xclip -selection clipboard
-echo "$input"

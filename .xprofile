@@ -2,3 +2,4 @@ sudo -n loadkeys ~/.local/bin/ttymaps.kmap 2>/dev/null
 xmodmap ~/.local/bin/xmaps.map > /dev/null 2>&1
 # xrandr --output HDMI-0 --mode 2560x1080
 feh --bg-max --random ~/.local/wallpaper/
+export PATH="$HOME/.local/bin:$PATH"

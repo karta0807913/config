@@ -1,0 +1,18 @@
+#!/bin/bash
+
+xinput | grep Touchpad | grep -o -E 'id=[0-9]*' | awk 'BEGIN {FS="="} ; { print $2 }' 2>> /tmp/pad >> /tmp/pad
+ID=$(xinput | grep Touchpad | grep -o -E 'id=[0-9]*' | awk 'BEGIN {FS="="} ; { print $2 }')
+if [ "$ID" = "" ]; then
+    exit 0
+fi
+
+State=$(xinput --list-props 12 | grep "Device Enabled" | awk 'BEGIN{ FS=":" }; { print $2 }' | awk '{print $1}')
+if [ "$State" = "0" ]; then
+    State="1"
+    notify-send "Touchpad" "Enable"
+else
+    State="0"
+    notify-send "Touchpad" "Disable"
+fi
+
+xinput set-prop "$ID" "Device Enabled" "$State"

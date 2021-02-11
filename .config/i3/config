@@ -236,8 +236,8 @@ for_window [title="mpvfloat"] border pixel 0
 no_focus [title="mpvfloat"]
 
 # #---Function Buttons---# #
+bindsym $mod+F1     exec --no-startup-id toggle-touchpad
 bindsym $mod+F2		exec --no-startup-id polybar-msg cmd restart; restart
-bindsym $mod+F4		exec --no-startup-id prompt "Hibernate computer?" "$hibernate"
 bindsym $mod+F5		exec --no-startup-id $netrefresh
 bindsym $mod+F9		exec --no-startup-id dmount
 bindsym $mod+F10	exec --no-startup-id dumount
@@ -280,13 +280,13 @@ bindsym $mod+Delete		exec $stoprec
 bindsym XF86Launch1		exec --no-startup-id xset dpms force off
 
 # #---Extra XF86 Keys---# #
-bindsym XF86AudioMute		exec --no-startup-id lmc mute
-bindsym XF86AudioLowerVolume	exec --no-startup-id lmc down 5
-bindsym Shift+XF86AudioLowerVolume	exec --no-startup-id lmc down 10
-bindsym Control+XF86AudioLowerVolume	exec --no-startup-id lmc down 1
-bindsym XF86AudioRaiseVolume	exec --no-startup-id lmc up 5
-bindsym Shift+XF86AudioRaiseVolume	exec --no-startup-id lmc up 10
-bindsym Control+XF86AudioRaiseVolume	exec --no-startup-id lmc up 1
+bindsym XF86AudioMute		exec --no-startup-id playerctl mute
+bindsym XF86AudioLowerVolume	exec --no-startup-id pactl set-sink-volume "$(pactl info | awk '/Default Sink: /{ print$3 }')" -5%
+bindsym Shift+XF86AudioLowerVolume	exec --no-startup-id pactl set-sink-volume "$(pactl info | awk '/Default Sink: /{ print$3 }')" -10%
+bindsym Control+XF86AudioLowerVolume	exec --no-startup-id pactl set-sink-volume "$(pactl info | awk '/Default Sink: /{ print$3 }')" -1%
+bindsym XF86AudioRaiseVolume	exec --no-startup-id pactl set-sink-volume "$(pactl info | awk '/Default Sink: /{ print$3 }')" -5%
+bindsym Shift+XF86AudioRaiseVolume	exec --no-startup-id pactl set-sink-volume "$(pactl info | awk '/Default Sink: /{ print$3 }')" -10%
+bindsym Control+XF86AudioRaiseVolume	exec --no-startup-id pactl set-sink-volume "$(pactl info | awk '/Default Sink: /{ print$3 }')" -1%
 bindsym XF86PowerOff		exec --no-startup-id prompt "Shutdown computer?" "$shutdown"
 ##bindsym XF86Copy		exec
 ##bindsym XF86Open		exec
