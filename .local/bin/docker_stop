@@ -3,7 +3,7 @@
 set -e
 
 CONTAINER_NAME="$(docker container ls --format '{{ .Names }} ({{ .Status }})' | \
-        dmenu -i -p "Select container to stop")"
+        rofi -dmenu -i -p "Select container to stop")"
 read <<< "$CONTAINER_NAME" CONTAINER_NAME STAT
 
 notify-send "try stop $CONTAINER_NAME"

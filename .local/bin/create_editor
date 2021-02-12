@@ -1,0 +1,70 @@
+#!/bin/bash
+
+USAGE="<usage> $0 [-x11] [DOCKER_OPTS] [--] project1, project2 ...
+      -x11           : enable docker x11 forwarding
+      --image string : target docker image. default: my_editor
+
+where DOCKER_OPTS    : default docker options, ex: --port 80:80
+      project        : target project folder"
+
+X11="OFF"
+DOCKER_OPTS=""
+IS_OPTIONS=false
+IMAGE="my_editor"
+
+
+while [ "$#" -ne 0 ];
+do
+    case "$1" in
+        --)
+            shift
+            break
+            ;;
+        -h|--help)
+            echo "$USAGE"
+            exit 1
+            ;;
+        --image)
+            IMAGE="$2"
+            shift
+            shift
+            ;;
+        -x11)
+            if [ "$X11" = "OFF" ]; then
+                X11="ON"
+                DOCKER_OPTS="${DOCKER_OPTS} -e DISPLAY=$DISPLAY -e XAUTHORITY=/tmp/.Xauthority -v /tmp/.X11-unix:/tmp/.X11-unix:rw -v $XAUTHORITY:/tmp/.Xauthority "
+            fi
+            shift
+            continue
+            ;;
+        -*)
+            DOCKER_OPTS="${DOCKER_OPTS}$1 "
+            IS_OPTIONS=true
+            shift;
+            ;;
+        *)
+            if $IS_OPTIONS; then
+                DOCKER_OPTS="${DOCKER_OPTS}$1 "
+                IS_OPTIONS=false
+            else
+                if ! readlink -f "$1" >/dev/null 2>/dev/null; then
+                    echo "no such file or directory $1"
+                    exit 1
+                fi
+                DOCKER_OPTS="${DOCKER_OPTS}-v $(readlink -f "$1"):/root/$(basename "$1") "
+            fi
+            shift;
+            ;;
+    esac
+done
+
+for file in "$@";
+do
+    if ! readlink -f "$file" >/dev/null 2>/dev/null; then
+        echo "no such file or directory $file"
+        exit 1
+    fi
+    DOCKER_OPTS="${DOCKER_OPTS}-v $(readlink -f "$file"):/root/$(basename "$file") "
+done
+
+docker run -it ${DOCKER_OPTS} "${IMAGE}"

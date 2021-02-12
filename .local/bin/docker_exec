@@ -21,21 +21,18 @@ function start_container() {
 }
 
 CONTAINER_NAME="$(docker container ls -a --format '{{ .Names }} ({{ .Status }})' | \
-        dmenu -i -p "Select container")"
+        rofi -dmenu -no-custom -i -p "Select container")"
 echo "$CONTAINER_NAME"
 
 read <<< "$CONTAINER_NAME" CONTAINER_NAME STAT
-echo "$CONTAINER_NAME"
-echo "$STAT"
 
 STAT="$(cut -c2-3 <<< "$STAT")"
-echo "$STAT"
 
 if [ "$STAT" == "Up" ];
 then
     gnome-terminal -- docker exec -it "$CONTAINER_NAME" bash
 else
-    case "$(dmenu -i -p "this container exited, select operation" <<< "$OPERATION_LIST")" in
+    case "$(rofi -dmenu -no-custom -i -p "this container exited, select operation" <<< "$OPERATION_LIST")" in
         "(start -ia)" )
             gnome-terminal -- docker start -ia "$CONTAINER_NAME"
             ;;
