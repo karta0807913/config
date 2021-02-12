@@ -37,7 +37,7 @@ font-2 = Noto Sans CJK HK:style=Regular:size=10;1
 
 modules-left = i3
 modules-center = date
-modules-right = memory cpu pulseaudio disk screen-recorder bluetooth docker
+modules-right = memory cpu pulseaudio disk screen-recorder battery acpi
 
 tray-position = right
 tray-padding = 2
@@ -174,3 +174,39 @@ type = custom/script
 exec = echo "empty"
 click-left = BLOCK_BUTTON=1 ~/.local/bin/statusbar/bluetooth
 label=🎧
+
+[module/acpi]
+type = custom/script
+exec = ~/.local/bin/statusbar/acpi_client
+tail = true
+
+[module/battery]
+type = internal/battery
+full-at = 99
+battery = BAT0
+adapter = AC
+time-format = %H:%M
+
+format-charging = <label-charging> <animation-charging>
+label-charging = %percentage%%
+
+format-discharging = <ramp-capacity> <label-discharging>
+label-discharging = %percentage%% %time% left
+
+format-full = ⚡ Full
+label-full = %percentage%%
+
+animation-charging-0 = ▕▁▁▁▁▏🔌
+animation-charging-1 = ▕█▁▁▁▏🔌
+animation-charging-2 = ▕██▁▁▏🔌
+animation-charging-3 = ▕███▁▏🔌
+animation-charging-4 = ▕████▏🔌
+animation-charging-framerate = 750
+
+ramp-capacity-0 = ▕▁▁▁▁▏🔋
+ramp-capacity-1 = ▕█▁▁▁▏🔋
+ramp-capacity-2 = ▕██▁▁▏🔋
+ramp-capacity-3 = ▕███▁▏🔋
+ramp-capacity-4 = ▕████▏🔋
+
+bar-capacity-width = 10
