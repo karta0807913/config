@@ -15,9 +15,19 @@ function get_python() {
     return 0
 }
 
+PYTHON="$(get_python)"
+if [ PYTHON = "" ]; then
+    echo "need python and dbus-python"
+    exit 1
+fi
+
+function python() {
+    $PYTHON "$@";
+}
+
+
 function get_bluez_devices() {
-    python="$1"
-    $python -c '
+    python -c '
 import dbus
 system = dbus.SystemBus()
 root = system.get_object("org.bluez", "/")
@@ -29,28 +39,53 @@ for key in managed_objects:
         status="Disconnected"
         if obj["Connected"] == 1:
             status="Connected"
-        print(obj["Address"], status, obj["Name"])
+        print(status, obj["Address"] , obj["Adapter"], obj["Name"])
 '
 }
 
-PYTHON="$(get_python)"
-if [ PYTHON = "" ]; then
-    echo "need python and dbus-python"
-    exit 1
-fi
+function toggle_bluez_devices() {
+    python -c "$(cat <<EOF
+import dbus
+import os
+system = dbus.SystemBus()
+root = system.get_object("org.bluez", "$1");
+device = dbus.Interface(root, dbus_interface="org.bluez.Device1")
+properties = dbus.Interface(root, dbus_interface="org.freedesktop.DBus.Properties")
+if properties.Get("org.bluez.Device1", "Connected") == 1:
+    os.system('notify-send "🎧Bluetooth" "Try to disconnect $2"')
+    try:
+        device.Disconnect();
+        os.system('notify-send "🎧Bluetooth" "Disconnect $2 success"')
+    except Exception as e:
+        print(e)
+        os.system('notify-send "🎧Bluetooth" "Disconnect $2 failed"')
+else:
+    os.system('notify-send "🎧Bluetooth" "Try to connect $2"')
+    try:
+        device.Connect();
+        os.system('notify-send "🎧Bluetooth" "Connect $2 success"')
+    except Exception as e:
+        print(e)
+        os.system('notify-send "🎧Bluetooth" "Connect $2 failed"')
+EOF
+)"
+}
 
-Device=$(get_bluez_devices $PYTHON | rofi -dmenu -i -no-custom -p "Connect Bluetooth Devices")
+index="0"
+declare -A devices
+options=''
+while read Connected Address Adapter Name;
+do
+    devices["$index $Name $Connected"]="$Adapter/dev_${Address//:/_} $Name"
+    options="${options}$index $Name $Connected
+"
+    index=$((index+1))
+done <<<$(get_bluez_devices)
+
+Device=$(printf "$options" | rofi -dmenu -i -no-custom -p "Connect Bluetooth Devices")
 
 if ! [ "$?" = "0" ]; then
     exit 1
 fi
 
-read Address Connected Name <<<${Device}
-instruction="connect"
-if [ "$Connected" = "Connected" ]; then
-    instruction="disconnect"
-fi
-notify-send "Bluetooth" "Try to ${instruction} ${Name}"
-bluetoothctl <<EOF > /dev/null
-${instruction} ${Address}
-EOF
+toggle_bluez_devices ${devices[$Device]}

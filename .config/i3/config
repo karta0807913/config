@@ -139,14 +139,8 @@ bindsym $mod+Shift+x            exec --no-startup-id i3lock -e -f -c 000000
 bindsym $mod+c                  exec --no-startup-id docker_info
 bindsym $mod+Shift+c            exec --no-startup-id docker_dmenu
 
-bindsym $mod+v                  exec --no-startup-id $term -e $EDITOR -c "VimwikiIndex"
-#bindsym $mod+Shift+v
-
 bindsym $mod+b                  exec --no-startup-id bluetooth_headset
 bindsym $mod+Shift+b            floating toggle; sticky toggle; exec --no-startup-id hover left
-
-bindsym $mod+n                  exec $term -e newsboat && pkill -RTMIN+6 i3blocks
-bindsym $mod+Shift+n            floating toggle; sticky toggle; exec --no-startup-id hover right
 
 # #---Workspace Bindings---# #
 bindsym $mod+Home               workspace $ws1
@@ -315,9 +309,9 @@ bindsym XF86AudioForward        exec --no-startup-id lmc forward 10
 ##bindsym XF86Launch8           exec
 ##bindsym XF86Launch9           exec
 #bindsym XF86AudioMicMute       exec
-##bindsym XF86TouchpadToggle    exec
-##bindsym XF86TouchpadOn        exec
-##bindsym XF86TouchpadOff       exec
+bindsym XF86TouchpadToggle      exec --no-startup-id toggle-touchpad
+bindsym XF86TouchpadOn          exec --no-startup-id toggle-touchpad
+bindsym XF86TouchpadOff         exec --no-startup-id toggle-touchpad
 ##bindsym XF86Suspend           exec
 ##bindsym XF86Close             exec
 ##bindsym XF86WebCam            exec

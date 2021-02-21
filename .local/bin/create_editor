@@ -11,6 +11,19 @@ X11="OFF"
 DOCKER_OPTS=""
 IS_OPTIONS=false
 IMAGE="my_editor"
+CONTAINER_NAME=""
+
+function add_folder() {
+    if ! readlink -f "$1" >/dev/null 2>/dev/null; then
+        echo "no such file or directory $1"
+        exit 1
+    fi
+    REALPATH="$(readlink -f "$1")"
+    if [ -z "$CONTAINER_NAME" ]; then
+        CONTAINER_NAME="$(basename "${REALPATH}")-develope"
+    fi
+    DOCKER_OPTS="${DOCKER_OPTS}-v $(readlink -f "$1"):/root/$(basename "${REALPATH}") "
+}
 
 
 while [ "$#" -ne 0 ];
@@ -38,6 +51,12 @@ do
             continue
             ;;
         -*)
+            if [ "$1" = "--name" ]; then
+                CONTAINER_NAME="$2"
+                shift
+                shift
+                continue
+            fi
             DOCKER_OPTS="${DOCKER_OPTS}$1 "
             IS_OPTIONS=true
             shift;
@@ -47,11 +66,7 @@ do
                 DOCKER_OPTS="${DOCKER_OPTS}$1 "
                 IS_OPTIONS=false
             else
-                if ! readlink -f "$1" >/dev/null 2>/dev/null; then
-                    echo "no such file or directory $1"
-                    exit 1
-                fi
-                DOCKER_OPTS="${DOCKER_OPTS}-v $(readlink -f "$1"):/root/$(basename "$1") "
+                add_folder "$1"
             fi
             shift;
             ;;
@@ -60,11 +75,7 @@ done
 
 for file in "$@";
 do
-    if ! readlink -f "$file" >/dev/null 2>/dev/null; then
-        echo "no such file or directory $file"
-        exit 1
-    fi
-    DOCKER_OPTS="${DOCKER_OPTS}-v $(readlink -f "$file"):/root/$(basename "$file") "
+    add_folder "$file"
 done
 
-docker run -it ${DOCKER_OPTS} "${IMAGE}"
+docker run -it ${DOCKER_OPTS} --name "${CONTAINER_NAME}" "${IMAGE}"

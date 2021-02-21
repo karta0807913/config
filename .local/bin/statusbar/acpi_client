@@ -13,7 +13,7 @@ function poweroff() {
 
 function lock() {
     playerctl pause > /dev/null 2>/dev/null
-    i3lock -e -f -c 000000 2>/dev/null
+    i3lock -e -f -c 000000 2>/dev/null -n
 }
 
 function current_screen() {
@@ -37,8 +37,8 @@ while key=$(acpi_listen -c 1); do
             fi
             ;;
         button/sleep)
-            lock
             systemctl suspend
+            lock
             ;;
         button/power)
             poweroff

@@ -6,7 +6,7 @@ if [ "$ID" = "" ]; then
     exit 0
 fi
 
-State=$(xinput --list-props 12 | grep "Device Enabled" | awk 'BEGIN{ FS=":" }; { print $2 }' | awk '{print $1}')
+State=$(xinput --list-props "$ID" | grep "Device Enabled" | awk 'BEGIN{ FS=":" }; { print $2 }' | awk '{print $1}')
 if [ "$State" = "0" ]; then
     State="1"
     notify-send "Touchpad" "Enable"
