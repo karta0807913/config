@@ -50,20 +50,21 @@ fi
 sudo add-apt-repository -y ppa:kelleyk/emacs
 sudo add-apt-repository -y ppa:kgilmer/speed-ricer
 curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb > /tmp/chrome.deb
-sudo apt install -y i3-gaps-wm i3blocks feh compton maim htop /tmp/chrome.deb gcc emacs27 font-manager playerctl polybar rofi python3-pip numlockx xclip polybar dnust ibus-chewing
+sudo apt update
+sudo apt install -y i3-gaps-wm i3blocks feh compton maim htop /tmp/chrome.deb gcc make emacs27 font-manager playerctl polybar rofi python3-pip numlockx xclip polybar ibus-chewing dunst
 
 sudo ln -f "$(which python3)" "$(dirname $(which python3))/python"
 
 pip3 install dbus-python
 
-git clone https://github.com/karta0807913/config.git /tmp/config
+git clone --depth 1 https://github.com/karta0807913/config.git /tmp/config
 cd /tmp/config/.local/bin/statusbar/
 gcc cpu_usage2.c -o cpu_usage2
 cd -
 cd /tmp/config
 git submodule init
 git submodule update
-cp -R .vimrc .bashrc .vim .local .config .profile ~/
+cp -R .vimrc .bashrc .vim .local .config .profile .xinitrc .xprofile .xinputrc ~/
 cd -
 
 echo ":VundleInstall" | vim
@@ -71,9 +72,11 @@ echo ":VundleInstall" | vim
 git clone https://github.com/karta0807913/emacs.d.git ~/.emacs.d
 cp ~/.emacs.d/.custom.el ~/
 
-curl -L https://github.com/microsoft/cascadia-code/releases/download/v2009.22/CascadiaCode-2009.22.zip > /tmp/CascadiaCode.zip
+if [ -f "/tmp/CascadiaCode.zip" ]; then
+    curl -L https://github.com/microsoft/cascadia-code/releases/download/v2009.22/CascadiaCode-2009.22.zip > /tmp/CascadiaCode.zip
+fi
 cd /tmp
-unzip CascadiaCode.zip
+unzip -u CascadiaCode.zip
 cd -
 
 # set font and gnome terminal theme
