@@ -51,20 +51,18 @@ sudo add-apt-repository -y ppa:kelleyk/emacs
 sudo add-apt-repository -y ppa:kgilmer/speed-ricer
 curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb > /tmp/chrome.deb
 sudo apt update
-sudo apt install -y i3-gaps-wm i3blocks feh compton maim htop /tmp/chrome.deb gcc make emacs27 font-manager playerctl polybar rofi python3-pip numlockx xclip polybar ibus-chewing dunst
+sudo apt install -y i3-gaps-wm i3blocks feh compton maim htop /tmp/chrome.deb emacs27 font-manager playerctl polybar rofi python3-pip numlockx xclip polybar ibus-chewing dunst
 
 sudo ln -f "$(which python3)" "$(dirname $(which python3))/python"
 
 pip3 install dbus-python
 
 git clone --depth 1 https://github.com/karta0807913/config.git /tmp/config
-cd /tmp/config/.local/bin/statusbar/
-gcc cpu_usage2.c -o cpu_usage2
-cd -
 cd /tmp/config
 git submodule init
 git submodule update
 cp -R .vimrc .bashrc .vim .local .config .profile .xinitrc .xprofile .xinputrc ~/
+mkdir .local/wallpaper
 cd -
 
 echo ":VundleInstall" | vim

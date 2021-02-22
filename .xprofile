@@ -1,2 +1,2 @@
-feh --bg-max --random ~/.local/wallpaper/
+! [ $(ls ~/.local/wallpaper | wc -l) -eq 0 ] && feh --bg-max --random ~/.local/wallpaper/
 export PATH="$HOME/.local/bin:$PATH"
