@@ -23,6 +23,6 @@ fi
 
 export FILE="nnn"
 export EDITOR="vim"
-export BROWSER="chrome"
+export BROWSER="google-chrome"
 export SUDO_ASKPASS="$HOME/.local/bin/dmenupass"
 
