@@ -5,4 +5,4 @@ if [ "$(ibus engine)" = "chewing" ]; then
 else
     ibus engine chewing
 fi
-xmodmap ~/.local/bin/xmaps.map > /dev/null 2>&1
+xmodmap ~/.Xmodmap > /dev/null 2>&1

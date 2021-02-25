@@ -61,7 +61,7 @@ git clone --depth 1 https://github.com/karta0807913/config.git /tmp/config
 cd /tmp/config
 git submodule init
 git submodule update
-cp -R .vimrc .bashrc .vim .local .config .profile .xinitrc .xprofile .xinputrc ~/
+cp -R .vimrc .bashrc .vim .local .config .profile .Xmodmap .xprofile .xinputrc ~/
 mkdir .local/wallpaper
 cd -
 
