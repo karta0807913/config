@@ -1,16 +1,18 @@
 #!/bin/bash
 
-USAGE="<usage> $0 [-x11] [DOCKER_OPTS] [--] project1, project2 ...
-      -x11           : enable docker x11 forwarding
-      --image string : target docker image. default: my_editor
+USAGE="<usage> $0 [OPTIONS] [DOCKER_OPTS] [--] project1, project2 ...
+where OPTIONS
+      -x11             : enable docker x11 forwarding
+      -t --type string : which editor version tag
 
-where DOCKER_OPTS    : default docker options, ex: --port 80:80
-      project        : target project folder"
+where DOCKER_OPTS      : default docker options, ex: --port 80:80
+      project          : target project folder"
 
 X11="OFF"
 DOCKER_OPTS=""
 IS_OPTIONS=false
-IMAGE="my_editor"
+IMAGE_NAME="my_editor"
+IMAGE_VERSION="base"
 CONTAINER_NAME=""
 
 function add_folder() {
@@ -25,6 +27,23 @@ function add_folder() {
     DOCKER_OPTS="${DOCKER_OPTS}-v $(readlink -f "$1"):/root/$(basename "${REALPATH}") "
 }
 
+function check_image_exists() {
+    docker inspect "$1" >/dev/null 2>/dev/null
+}
+
+function build_editor_image() {
+    name="$1"
+    version="$2"
+    dockerpath="$HOME/.emacs.d/docker/Dockerfile.$version"
+    if [ "$version" = "base" ]; then
+        dockerpath="$HOME/.emacs.d/Dockerfile"
+    fi
+    docker build -t "$name:$version" -f "$dockerpath" "$HOME/.emacs.d/"
+    if [ "$?" != "0" ]; then
+        echo "build failed";
+        exit 1;
+    fi
+}
 
 while [ "$#" -ne 0 ];
 do
@@ -37,9 +56,9 @@ do
             echo "$USAGE"
             exit 1
             ;;
-        --image)
-            IMAGE="$2"
+        -t|--type)
             shift
+            IMAGE_VERSION="$1"
             shift
             ;;
         -x11)
@@ -73,9 +92,41 @@ do
     esac
 done
 
+case "$IMAGE_VERSION" in
+    base)
+        ;;
+    nodejs|node)
+        IMAGE_VERSION="base"
+        ;;
+    latex)
+        IMAGE_VERSION="latex"
+        ;;
+    golang)
+        IMAGE_VERSION="base"
+        ;;
+    clang)
+        IMAGE_VERSION="clang"
+        ;;
+    gcc)
+        IMAGE_VERSION="gcc"
+        ;;
+    *)
+        echo "except type in base, node, nodejs, latex, golang, clang and gcc, but get $IMAGE_VERSION"
+        exit 1
+esac
+
+if ! check_image_exists "$IMAGE_NAME:$IMAGE_VERSION"; then
+    build_editor_image "$IMAGE_NAME" "$IMAGE_VERSION"
+fi
+
 for file in "$@";
 do
     add_folder "$file"
 done
 
-docker run -it ${DOCKER_OPTS} --name "${CONTAINER_NAME}" "${IMAGE}"
+if docker run -it ${DOCKER_OPTS} -d --name "${CONTAINER_NAME}" "${IMAGE_NAME}:${IMAGE_VERSION}"; then
+    cat ~/.gitconfig | docker exec -i "${CONTAINER_NAME}" sh -c 'cat > ~/.gitconfig' >/dev/null
+fi
+
+clear
+docker attach "${CONTAINER_NAME}"
