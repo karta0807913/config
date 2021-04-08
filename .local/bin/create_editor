@@ -14,6 +14,7 @@ IS_OPTIONS=false
 IMAGE_NAME="my_editor"
 IMAGE_VERSION="base"
 CONTAINER_NAME=""
+WORKING_DIR=""
 
 function add_folder() {
     if ! readlink -f "$1" >/dev/null 2>/dev/null; then
@@ -24,7 +25,12 @@ function add_folder() {
     if [ -z "$CONTAINER_NAME" ]; then
         CONTAINER_NAME="$(basename "${REALPATH}")-develope"
     fi
-    DOCKER_OPTS="${DOCKER_OPTS}-v $(readlink -f "$1"):/root/$(basename "${REALPATH}") "
+    DOCKER_OPTS="${DOCKER_OPTS}-v $(readlink -f "$1"):/home/code/$(basename "${REALPATH}") "
+    if [ "${WORKING_DIR}" = "" ]; then
+        WORKING_DIR="/home/code/$(basename "${REALPATH}")"
+    else
+        WORKING_DIR="/home/code"
+    fi
 }
 
 function check_image_exists() {
@@ -124,7 +130,12 @@ do
     add_folder "$file"
 done
 
-if docker run -it ${DOCKER_OPTS} -d --name "${CONTAINER_NAME}" "${IMAGE_NAME}:${IMAGE_VERSION}"; then
+if ! [ "${WORKING_DIR}" = "" ]; then
+    DOCKER_OPTS="${DOCKER_OPTS} -w ${WORKING_DIR}"
+fi
+
+if docker run -it ${DOCKER_OPTS} -u "$(id -u):$(id -g)" -d --name "${CONTAINER_NAME}" "${IMAGE_NAME}:${IMAGE_VERSION}"; then
+    docker exec -u root "${CONTAINER_NAME}" sh -c "chown -R \"$(id -u):$(id -g)\" /home/code/*; find /go -maxdepth 4 | xargs -i chown \"$(id -u):$(id -g)\" {}; rm -rf /go/cache /go/pkg/mod/cache"
     cat ~/.gitconfig | docker exec -i "${CONTAINER_NAME}" sh -c 'cat > ~/.gitconfig' >/dev/null
 fi
 
