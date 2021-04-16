@@ -26,6 +26,7 @@ if ! which docker > /dev/null ; then
         "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
         $(lsb_release -cs) \
         stable"
+    sudo apt update
     sudo apt-get install -y docker-ce docker-ce-cli containerd.io
     set +e
 fi
