@@ -14,7 +14,7 @@ elif [ ! "$BLOCK_BUTTON" = "1" ]; then
     # notify-send "Record Message" "Left Button to start record"
     echo "⭕ ready"
 else
-    filename="$(mktemp)"
+    filename="$(mktemp -t gif-record.XXXXXXXXXX.gif)"
     position="$(slop -o -f "--x=%x --y=%y --width=%w --height=%h")"
     if [ "$position" = "" ]; then
         echo "⭕ ready"
