@@ -16,9 +16,9 @@ case "$select" in
         OPTIONS=''
         for name in $NAMES;
         do
-            OPTIONS="${OPTIONS}$(docker inspect "$name" --format '{{ .Name }} {{ .Config.Image }} {{ index .Config.Cmd 0 }};' | cut -c 2-)"
+            OPTIONS="${OPTIONS};$(docker inspect "$name" --format '{{ .Name }} {{ .Config.Image }} {{ if (ne (len .Config.Cmd) 0) }}{{ index .Config.Cmd 0 }}{{ else }}null{{ end }}' | cut -c 2-)"
         done
-        echo "$OPTIONS" | rofi -dmenu -sep ';' -p "🐳 select delete contrinaer" -location 2 -yoffset 32 | {
+        echo "$OPTIONS" | cut -c 2- | rofi -dmenu -sep ';' -p "🐳 select delete contrinaer" -location 2 -yoffset 32 | {
             read TARGET others;
             echo "$TARGET"
             if [ "$(printf 'no\nyes' | rofi -dmenu -p "🐳 delete container $target?" -location 2 -yoffset 32)" =  "yes" ]; then
