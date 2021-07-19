@@ -108,7 +108,7 @@ case "$IMAGE_VERSION" in
         IMAGE_VERSION="latex"
         ;;
     golang)
-        IMAGE_VERSION="base"
+        IMAGE_VERSION="gcc"
         ;;
     clang)
         IMAGE_VERSION="clang"
@@ -116,8 +116,14 @@ case "$IMAGE_VERSION" in
     gcc)
         IMAGE_VERSION="gcc"
         ;;
+    flutter)
+        IMAGE_VERSION="flutter"
+        ;;
+    java)
+        IMAGE_VERSION="java"
+        ;;
     *)
-        echo "except type in base, node, nodejs, latex, golang, clang and gcc, but get $IMAGE_VERSION"
+        echo "except type in base, node, nodejs, latex, golang, flutter, clang and gcc, but get $IMAGE_VERSION"
         exit 1
 esac
 
@@ -134,7 +140,11 @@ if ! [ "${WORKING_DIR}" = "" ]; then
     DOCKER_OPTS="${DOCKER_OPTS} -w ${WORKING_DIR}"
 fi
 
-if docker run -it ${DOCKER_OPTS} -u "$(id -u):$(id -g)" -d --name "${CONTAINER_NAME}" "${IMAGE_NAME}:${IMAGE_VERSION}"; then
+if docker run -it ${DOCKER_OPTS} -d -u "$(id -u):$(id -g)" --name "${CONTAINER_NAME}" "${IMAGE_NAME}:${IMAGE_VERSION}"; then
+    docker exec -u root "${CONTAINER_NAME}" groupadd --gid "$(id -g)" "$(getent group $(id -g) | cut -d: -f1)"
+    docker exec -u root "${CONTAINER_NAME}" useradd --uid $UID --gid "$(id -g)" "$(whoami)"
+    docker exec -u root "${CONTAINER_NAME}" bash -c "echo '$(whoami) ALL=(ALL:ALL) NOPASSWD:ALL' >> /etc/sudoers"
+
     docker exec -u root "${CONTAINER_NAME}" sh -c "chown -R \"$(id -u):$(id -g)\" /home/code/*; find /go -maxdepth 4 | xargs -i chown \"$(id -u):$(id -g)\" {}; rm -rf /go/cache /go/pkg/mod/cache"
     cat ~/.gitconfig | docker exec -i "${CONTAINER_NAME}" sh -c 'cat > ~/.gitconfig' >/dev/null
 fi
