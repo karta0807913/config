@@ -39,5 +39,9 @@ then
     fi
 fi
 set -e
-convert -density 288 pg_????.pdf +adjoin -quality 100 -size 3000x4000 "$(echo "$1" | sed 's/\.pdf$//').jpg"
+for pdf in pg_????.pdf;
+do
+    PDFID="$(echo $pdf | sed 's/^pg_//' | sed 's/\.pdf$//')"
+    convert -density 600 $pdf +adjoin -quality 100 -size 3000x4000 "$(echo "$1" | sed 's/\.pdf$//')-$PDFID.jpg"
+done
 echo "done"

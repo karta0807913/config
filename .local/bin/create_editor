@@ -2,16 +2,24 @@
 
 USAGE="<usage> $0 [OPTIONS] [DOCKER_OPTS] [--] project1, project2 ...
 where OPTIONS
-      -x11             : enable docker x11 forwarding
+      -x11             : enable the container x11 forwarding
       -t --type string : which editor version tag
 
 where DOCKER_OPTS      : default docker options, ex: --port 80:80
       project          : target project folder"
 
+if which podman > /dev/null 2>/dev/null; then
+    CONTAINERD="podman"
+elif which docker > /dev/null 2>/dev/null; then
+    CONTAINERD="docker"
+else
+    echo "no container manager found"
+fi
+
 X11="OFF"
 DOCKER_OPTS=""
 IS_OPTIONS=false
-IMAGE_NAME="my_editor"
+IMAGE_NAME="localhost/my_editor"
 IMAGE_VERSION="base"
 CONTAINER_NAME=""
 WORKING_DIR=""
@@ -23,7 +31,7 @@ function add_folder() {
     fi
     REALPATH="$(readlink -f "$1")"
     if [ -z "$CONTAINER_NAME" ]; then
-        CONTAINER_NAME="$(basename "${REALPATH}")-develope"
+        CONTAINER_NAME="$(basename "${REALPATH}")-develop"
     fi
     DOCKER_OPTS="${DOCKER_OPTS}-v $(readlink -f "$1"):/home/code/$(basename "${REALPATH}") "
     if [ "${WORKING_DIR}" = "" ]; then
@@ -34,7 +42,7 @@ function add_folder() {
 }
 
 function check_image_exists() {
-    docker inspect "$1" >/dev/null 2>/dev/null
+    ${CONTAINERD} inspect "$1" >/dev/null 2>/dev/null
 }
 
 function build_editor_image() {
@@ -43,8 +51,10 @@ function build_editor_image() {
     dockerpath="$HOME/.emacs.d/docker/Dockerfile.$version"
     if [ "$version" = "base" ]; then
         dockerpath="$HOME/.emacs.d/Dockerfile"
+    elif ! check_image_exists "${IMAGE_NAME}" "base"; then
+        build_editor_image "${IMAGE_NAME}" "base";
     fi
-    docker build -t "$name:$version" -f "$dockerpath" "$HOME/.emacs.d/"
+    ${CONTAINERD} build -t "$name:$version" -f "$dockerpath" "$HOME/.emacs.d/"
     if [ "$?" != "0" ]; then
         echo "build failed";
         exit 1;
@@ -108,7 +118,7 @@ case "$IMAGE_VERSION" in
         IMAGE_VERSION="latex"
         ;;
     golang)
-        IMAGE_VERSION="gcc"
+        IMAGE_VERSION="golang"
         ;;
     clang)
         IMAGE_VERSION="clang"
@@ -140,14 +150,28 @@ if ! [ "${WORKING_DIR}" = "" ]; then
     DOCKER_OPTS="${DOCKER_OPTS} -w ${WORKING_DIR}"
 fi
 
-if docker run -it ${DOCKER_OPTS} -d -u "$(id -u):$(id -g)" --name "${CONTAINER_NAME}" "${IMAGE_NAME}:${IMAGE_VERSION}"; then
-    docker exec -u root "${CONTAINER_NAME}" groupadd --gid "$(id -g)" "$(getent group $(id -g) | cut -d: -f1)"
-    docker exec -u root "${CONTAINER_NAME}" useradd --uid $UID --gid "$(id -g)" "$(whoami)"
-    docker exec -u root "${CONTAINER_NAME}" bash -c "echo '$(whoami) ALL=(ALL:ALL) NOPASSWD:ALL' >> /etc/sudoers"
-
-    docker exec -u root "${CONTAINER_NAME}" sh -c "chown -R \"$(id -u):$(id -g)\" /home/code/*; find /go -maxdepth 4 | xargs -i chown \"$(id -u):$(id -g)\" {}; rm -rf /go/cache /go/pkg/mod/cache"
-    cat ~/.gitconfig | docker exec -i "${CONTAINER_NAME}" sh -c 'cat > ~/.gitconfig' >/dev/null
+if [ -d ~/.config/TabNine ]; then
+    DOCKER_OPTS="${DOCKER_OPTS} -v ${HOME}/.config/TabNine:/home/code/.config/TabNine"
 fi
 
-clear
-docker attach "${CONTAINER_NAME}"
+case "${CONTAINERD}" in
+    docker)
+        if docker run -it ${DOCKER_OPTS} -d -u "$(id -u):$(id -g)" --name "${CONTAINER_NAME}" "${IMAGE_NAME}:${IMAGE_VERSION}"; then
+            // setup user and group name.
+            docker exec -u root "${CONTAINER_NAME}" groupadd --gid "$(id -g)" "$(getent group $(id -g) | cut -d: -f1)"
+            docker exec -u root "${CONTAINER_NAME}" useradd --uid $UID --gid "$(id -g)" "$(whoami)"
+            docker exec -u root "${CONTAINER_NAME}" bash -c "echo '$(whoami) ALL=(ALL:ALL) NOPASSWD:ALL' >> /etc/sudoers"
+
+            // setup the correct access right.
+            docker exec -u root "${CONTAINER_NAME}" sh -c "chown -R \"$(id -u):$(id -g)\" /home/code/*; find /go -maxdepth 4 | xargs -i chown \"$(id -u):$(id -g)\" {}"
+            if [ -f ~/.gitconfig ]; then
+                cat ~/.gitconfig | docker exec -i "${CONTAINER_NAME}" sh -c 'cat > ~/.gitconfig' >/dev/null
+            fi
+        fi
+        # clear
+        docker attach "${CONTAINER_NAME}"
+        ;;
+    podman)
+        podman run -i -t ${DOCKER_OPTS} --name "${CONTAINER_NAME}" "${IMAGE_NAME}:${IMAGE_VERSION}";
+        ;;
+esac

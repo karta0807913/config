@@ -135,8 +135,8 @@ bindsym $mod+Shift+z            gaps outer current minus 5
 bindsym $mod+x                  exec --no-startup-id playerctl pause; exec --no-startup-id i3lock -e -f -c 000000
 bindsym $mod+Shift+x            exec --no-startup-id i3lock -e -f -c 000000
 
-bindsym $mod+c                  exec --no-startup-id docker_info
-bindsym $mod+Shift+c            exec --no-startup-id docker_dmenu
+bindsym $mod+c                  exec --no-startup-id podman_info
+bindsym $mod+Shift+c            exec --no-startup-id podman_dmenu
 
 bindsym $mod+b                  exec --no-startup-id bluetooth_headset
 bindsym $mod+Shift+b            floating toggle; sticky toggle; exec --no-startup-id hover left

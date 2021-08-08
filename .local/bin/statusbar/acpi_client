@@ -37,7 +37,7 @@ while key=$(acpi_listen -c 1); do
             fi
             ;;
         button/sleep)
-            systemctl suspend
+            systemctl suspend 2>/dev/null
             lock
             ;;
         button/power)

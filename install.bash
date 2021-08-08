@@ -10,49 +10,29 @@ if ! lsb_release --id | grep "Ubuntu" > /dev/null; then
     exit 1
 fi
 
+sudo apt update
+sudo apt install -y software-properties-common
 
-if ! which docker > /dev/null ; then
+if ! which podman > /dev/null 2>/dev/null ; then
     set -e
-    # install docker
-    sudo apt-get install -y \
-        apt-transport-https \
-        ca-certificates \
-        curl \
-        gnupg-agent \
-        software-properties-common
-
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-    sudo add-apt-repository \
-        "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-        $(lsb_release -cs) \
-        stable"
-    sudo apt update
-    sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+    . /etc/os-release
+    echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+    curl -L "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key" | sudo apt-key add -
+    sudo apt-get update
+    sudo apt-get -y upgrade
+    sudo apt-get -y install podman
     set +e
 fi
 
-if ! groups | grep "docker" > /dev/null; then
-    if ! sudo adduser "$USER" "docker"; then
-        echo "user $USER join group docker failed :<"
-    fi
-fi
-
-# check notification daemon exists
-if ! gdbus call --session --dest org.freedesktop.DBus --object-path /org/freedesktop/Dbus --method org.freedesktop.DBus.ListNames | grep "org.freedesktop.Notifications" > /dev/null; then
-    # install dunst
-    set -e
-    git clone https://github.com/dunst-project/dunst /tmp/dunst
-    cd /tmp/dunst
-    make
-    sudo make install
-    cd -
+if ! podman network inspect podman >/dev/null 2>/dev/null; then
+    podman create network podman
 fi
 
 sudo add-apt-repository -y ppa:kelleyk/emacs
 sudo add-apt-repository -y ppa:kgilmer/speed-ricer
 curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb > /tmp/chrome.deb
 sudo apt update
-sudo apt install -y i3-gaps-wm i3blocks feh compton maim htop /tmp/chrome.deb emacs27 font-manager playerctl polybar rofi python3-pip numlockx xclip polybar ibus-chewing dunst i3lock
+sudo apt install -y i3-gaps-wm i3blocks feh compton maim htop /tmp/chrome.deb emacs27 font-manager playerctl polybar rofi python3-pip numlockx xclip polybar ibus-chewing dunst i3lock vim
 
 sudo ln -f "$(which python3)" "$(dirname $(which python3))/python"
 

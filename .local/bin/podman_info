@@ -1,0 +1,28 @@
+#!/bin/bash
+
+set -e
+
+IFS=$'\n';
+POD_INFO=""
+for line in $(podman ps -a --format '{{ .Names }} {{ .Status }}'); 
+do
+    IFS=' ';
+    read Name Status <<<"$line";
+    STAT=$(cut -c1-2 <<<"$Status")
+    if [ "$STAT" = "Up" ]; then
+        POD_INFO="${POD_INFO}<span>$Name</span> <span size='small' fgcolor='#00FF009e'>$Status</span>"$'\n'
+    else
+        POD_INFO="${POD_INFO}<span>$Name</span> <span size='small' fgcolor='#ff00009e'>$Status</span>"$'\n'
+    fi
+done
+
+CONTAINER_NAME="$(echo "$POD_INFO" | rofi -no-custom -dmenu -i -p "🐳Docker" -location 2 -width 40 -lines 10 -markup-rows | cut -c7- | awk 'BEGIN { FS="<" } /span/{ print $1 }')"
+
+[ -z "$CONTAINER_NAME" ] && exit 1
+
+notify-send "🐳 container $CONTAINER_NAME info" "$(podman inspect --format \
+"<div>HostName:{{ .Config.Hostname }}</div>
+<div>Image:{{ .Config.Image }}</div>
+<div>Command: {{ index .Config.Cmd 0 }}</div>
+<div>IP:{{ .NetworkSettings.IPAddress }}</div>" "$CONTAINER_NAME")"
+

@@ -1,0 +1,99 @@
+#!/bin/bash
+
+set -e
+
+function podman_start() {
+    OPERATION_LIST="(start)
+(start -ia)
+(start && exec -it)
+(start -ia && exec -it)"
+
+    CONTAINER_NAME="$(podman container ls -a --format '{{ .Names }} ({{ .Status }})' | rofi -dmenu -no-custom -i -p "Select container")"
+    echo "$CONTAINER_NAME"
+
+    read <<< "$CONTAINER_NAME" CONTAINER_NAME STAT
+    STAT="$(cut -c2-3 <<< "$STAT")"
+
+    if [ "$STAT" == "Up" ];
+    then
+        gnome-terminal -- podman exec -it "$CONTAINER_NAME" bash
+    else
+        case "$(rofi -dmenu -no-custom -i -p "this container exited, select operation" <<< "$OPERATION_LIST")" in
+            "(start -ia)" )
+                gnome-terminal -- bash -c "podman start -ia \"$CONTAINER_NAME\""
+                ;;
+            "(start)" )
+                start_container "$CONTAINER_NAME"
+                ;;
+            "(start && exec -it)" )
+                start_container "$CONTAINER_NAME"
+                gnome-terminal -- bash -c "podman exec -it \"$CONTAINER_NAME\" bash"
+                ;;
+            "(start -ia && exec -it)" )
+                gnome-terminal -- podman start -ia "$CONTAINER_NAME"
+                gnome-terminal -- podman exec -it "$CONTAINER_NAME" bash
+                ;;
+        esac
+    fi
+}
+
+function start_container() {
+    notify-send "try start $CONTAINER_NAME"
+    if [ "$(docker start "$1")" ]
+    then
+        notify-send "$1 started"
+        return 0
+    else
+        stat="$?"
+        notify-send "start $1 failed"
+        return "$stat"
+    fi
+}
+
+function podman_delete() {
+    NAMES=$(podman container ls -f status=exited --format '{{ .Names  }}')
+    OPTIONS=''
+    for name in $NAMES;
+    do
+        OPTIONS="${OPTIONS};$(podman inspect "$name" --format '{{ .Name }} {{ .Config.Image }} {{ if (ne (len .Config.Cmd) 0) }}{{ index .Config.Cmd 0 }}{{ else }}null{{ end }}' | cut -c 2-)"
+    done
+    echo "$OPTIONS" | cut -c 2- | rofi -dmenu -sep ';' -p "🐳 select delete contrinaer" -location 2 -yoffset 32 | {
+        read TARGET others;
+            echo "$TARGET"
+            if [ "$(printf 'no\nyes' | rofi -dmenu -p "🐳 delete container $target?" -location 2 -yoffset 32)" =  "yes" ]; then
+                podman rm "$TARGET"
+                notify-send "🐳 delete container $target success"
+            fi
+        }
+}
+
+function podman_stop() {
+    CONTAINER_NAME="$(podman container ls --format '{{ .Names }} ({{ .Status }})' | rofi -dmenu -i -p "Select container to stop")"
+    read <<< "$CONTAINER_NAME" CONTAINER_NAME STAT
+
+    notify-send "try stop $CONTAINER_NAME"
+
+    if [ "$(podman stop "$CONTAINER_NAME")" ]
+    then
+        notify-send "$CONTAINER_NAME stopped"
+    else
+        stat="$?"
+        notify-send "stop $CONTAINER_NAME failed"
+        exit "$stat"
+    fi
+}
+
+select="$(printf 'start\nstop\ndelete' | rofi -dmenu -i -no-custom -p "containerd" -location 2 -yoffset 32 -xoffset -10 -width 10 -lines 3)"
+
+case "$select" in
+    start)
+        podman_start
+        ;;
+    stop)
+        podman_stop
+        ;;
+    delete)
+        podman_delete
+        ;;
+esac
+
