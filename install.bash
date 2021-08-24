@@ -29,7 +29,7 @@ if ! podman network inspect podman >/dev/null 2>/dev/null; then
 fi
 
 sudo add-apt-repository -y ppa:kelleyk/emacs
-sudo add-apt-repository -y ppa:kgilmer/speed-ricer
+sudo add-apt-repository -y ppa:regolith-linux/release
 curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb > /tmp/chrome.deb
 sudo apt update
 sudo apt install -y i3-gaps-wm i3blocks feh compton maim htop /tmp/chrome.deb emacs27 font-manager playerctl polybar rofi python3-pip numlockx xclip polybar ibus-chewing dunst i3lock vim
