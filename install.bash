@@ -51,7 +51,7 @@ echo ":VundleInstall" | vim
 git clone https://github.com/karta0807913/emacs.d.git ~/.emacs.d
 cp ~/.emacs.d/.custom.el ~/
 
-if [ -f "/tmp/CascadiaCode.zip" ]; then
+if ! [ -f "/tmp/CascadiaCode.zip" ]; then
     curl -L https://github.com/microsoft/cascadia-code/releases/download/v2106.17/CascadiaCode-2106.17.zip > /tmp/CascadiaCode.zip
 fi
 cd /tmp
