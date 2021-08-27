@@ -33,6 +33,9 @@ sudo add-apt-repository -y ppa:regolith-linux/release
 curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb > /tmp/chrome.deb
 sudo apt update
 sudo apt install -y i3-gaps-wm i3blocks feh compton maim htop /tmp/chrome.deb emacs27 font-manager playerctl polybar rofi python3-pip numlockx xclip polybar ibus-chewing dunst i3lock vim
+# the fonts for st terminal
+sudo apt install -y fonts-linuxlibertine fonts-inconsolata fonts-inconsolata
+fonts-emojione fonts-symbola
 
 sudo ln -f "$(which python3)" "$(dirname $(which python3))/python"
 
