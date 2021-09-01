@@ -101,9 +101,12 @@ label-urgent-padding = 2
 [module/pulseaudio]
 type = internal/pulseaudio
 
-format-volume = <label-volume> <bar-volume>
-label-volume = 🔊 %percentage%%
+format-volume = <ramp-volume> <label-volume> <bar-volume>
+label-volume = %percentage%%
 label-volume-foreground = ${root.foreground}
+ramp-volume-0 = 🔈
+ramp-volume-1 = 🔉
+ramp-volume-2 = 🔊
 
 label-muted = 🔇 muted
 label-muted-foreground = #666
