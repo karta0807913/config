@@ -31,7 +31,7 @@ padding-right = 2
 module-margin-left = 1
 module-margin-right = 2
 
-font-0 = monofur:fontformat=truetype:size=10;1
+font-0 = Cascadia Code:style=Regular:fontformat=truetype:size=11;1
 font-1 = Emoji One:style=Regular:scale=10;1
 font-2 = Noto Sans CJK HK:style=Regular:size=10;1
 
@@ -69,7 +69,7 @@ pin-workspaces = true
 ; Only show workspaces on the same output as the bar
 ;pin-workspaces = true
 
-label-mode-padding = 2
+label-mode-padding = 1
 label-mode-foreground = #000
 label-mode-background = ${colors.primary}
 
@@ -81,7 +81,7 @@ label-focused-padding = 2
 
 ; unfocused = Inactive workspace on any monitor
 label-unfocused = %index%
-label-unfocused-padding = 2
+label-unfocused-padding = 1
 
 ; visible = Active workspace on unfocused monitor
 label-visible = %index%
@@ -182,7 +182,7 @@ tail = true
 
 [module/battery]
 type = internal/battery
-full-at = 96
+full-at = 95
 battery = BAT0
 adapter = AC
 time-format = %H:%M

@@ -1,4 +1,5 @@
 #!/bin/bash
+set +e
 
 if [ "$(uname -m)" != "x86_64" ]; then
     echo "this script only support x86_64 :<"
@@ -10,8 +11,8 @@ if ! lsb_release --id | grep "Ubuntu" > /dev/null; then
     exit 1
 fi
 
-sudo apt update
-sudo apt install -y software-properties-common
+sudo apt-get update
+sudo apt-get install -y software-properties-common
 
 if ! which podman > /dev/null 2>/dev/null ; then
     set -e
@@ -48,7 +49,7 @@ podman rm -f polybar || echo "no polybar found"
 
 podman run --name polybar ubuntu:20.04 bash -c "
 apt-get update;
-DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential git cmake cmake-data pkg-config python3-sphinx python3-packaging libcairo2-dev libxcb1-dev libxcb-util0-dev libxcb-randr0-dev libxcb-composite0-dev python3-xcbgen xcb-proto libxcb-image0-dev libxcb-ewmh-dev libxcb-icccm4-dev gcc g++ make;
+DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential git cmake cmake-data pkg-config python3-sphinx python3-packaging libcairo2-dev libxcb1-dev libxcb-util0-dev libxcb-randr0-dev libxcb-composite0-dev python3-xcbgen xcb-proto libxcb-image0-dev libxcb-ewmh-dev libxcb-icccm4-dev gcc g++ make libxcb-xkb-dev libxcb-xrm-dev libxcb-cursor-dev libasound2-dev libpulse-dev i3-wm libjsoncpp-dev libmpdclient-dev libcurl4-openssl-dev libnl-genl-3-dev;
 git clone --recursive --depth 1 https://github.com/polybar/polybar.git
 cd polybar;
 mkdir build
@@ -66,7 +67,7 @@ sudo add-apt-repository -y ppa:kelleyk/emacs
 sudo add-apt-repository -y ppa:regolith-linux/release
 curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb > /tmp/chrome.deb
 sudo apt update
-sudo apt install -y i3-gaps-wm feh maim htop /tmp/chrome.deb emacs27 font-manager playerctl rofi python3-pip numlockx xclip ibus-chewing dunst i3lock vim libxcb-damage0 libconfig9 python3-pip git make gcc g++ unzip
+sudo apt install -y i3-gaps-wm feh maim htop /tmp/chrome.deb emacs27 font-manager playerctl rofi python3-pip numlockx xclip ibus-chewing dunst i3lock vim libxcb-damage0 libconfig9 libxcb-composite0 libjsoncpp1 libxcb-composite0 libjsoncpp1 libmpdclient2 libnl-genl-3-200 python3-pip git make gcc g++ unzip acpid
 # the fonts for st terminal
 sudo apt install -y fonts-linuxlibertine fonts-inconsolata fonts-inconsolata fonts-emojione fonts-symbola
 
