@@ -10,7 +10,7 @@ for_window [class="^.*"] border pixel 2
 gaps inner 15
 gaps outer 15
 font pango:monospace 8
-set $term --no-startup-id /usr/bin/gnome-terminal
+set $term --no-startup-id st
 #i3-sensible-terminal
 set $mod Mod4
 set $stoprec --no-startup-id dmenurecord kill
@@ -37,9 +37,9 @@ for_window [instance="dropdown_*"] move position center
 # Setting the background:
 # exec --no-startup-id setbg
 # Starts dunst for notifications:
-exec --no-startup-id dunst
+exec_always dunst
 # Composite manager:
-exec --no-startup-id compton
+exec_always picom
 # numlock
 exec --no-startup-id numlockx on
 # Runs the key remapping scripts
@@ -51,7 +51,7 @@ exec --no-startup-id numlockx on
 # Podboat automatic queue and download
 # exec_always --no-startup-id podentr
 
-exec --no-startup-id (killall polybar; for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do MONITOR=$m polybar example & done)
+exec_always (killall polybar; for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do MONITOR=$m polybar example & done)
 
 # bar {
 #       font pango:mono 10
