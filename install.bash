@@ -66,7 +66,7 @@ sudo add-apt-repository -y ppa:kelleyk/emacs
 sudo add-apt-repository -y ppa:regolith-linux/release
 curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb > /tmp/chrome.deb
 sudo apt update
-sudo apt install -y i3-gaps-wm i3blocks feh maim htop /tmp/chrome.deb emacs27 font-manager playerctl rofi python3-pip numlockx xclip ibus-chewing dunst i3lock vim libxcb-damage0 libconfig9 python3-pip git make gcc g++
+sudo apt install -y i3-gaps-wm feh maim htop /tmp/chrome.deb emacs27 font-manager playerctl rofi python3-pip numlockx xclip ibus-chewing dunst i3lock vim libxcb-damage0 libconfig9 python3-pip git make gcc g++ unzip
 # the fonts for st terminal
 sudo apt install -y fonts-linuxlibertine fonts-inconsolata fonts-inconsolata fonts-emojione fonts-symbola
 
