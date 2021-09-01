@@ -1,4 +1,3 @@
-
 let mapleader = ','
 
 map <leader>ntd :NERDTreeToggle<CR>
@@ -17,30 +16,17 @@ if has("autocmd")
   au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 endif
 
-syntax on
-filetype plugin indent on
+call plug#begin('~/.vim/plugged')
 
-" VundleVim
-set nocompatible              " be iMproved, required
-filetype off                  " required
+Plug 'scrooloose/nerdtree'
+Plug 'terryma/vim-multiple-cursors'
+Plug 'junegunn/fzf.vim'
+Plug 'tpope/vim-surround'
+Plug 'sonph/onehalf', { 'rtp': 'vim' }
 
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+call plug#end()
 
-Plugin 'VundleVim/Vundle.vim'
-Plugin 'scrooloose/nerdtree'
-Plugin 'terryma/vim-multiple-cursors'
-Plugin 'junegunn/fzf.vim'
-Plugin 'tpope/vim-surround'
-
-" Plugin 'flazz/vim-colorschemes'
-" Plugin 'morhetz/gruvbox'
-
-" All of your Plugins must be added before the following line
-call vundle#end()            " required
-filetype plugin indent on    " required
-
-" git config --global diff.tool vimdiff
-" git config --global difftool.prompt false
-" git config --global alias.d difftool
+try
+    colorscheme onehalfdark
+catch
+endtry

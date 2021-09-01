@@ -1,3 +1,0 @@
-#!/bin/sh
-
-docker run -e "DISPLAY=$DISPLAY" -e "XAUTHORITY=/tmp/.Xauthority" -v "/tmp/.X11-unix:/tmp/.X11-unix:rw" -v "$XAUTHORITY:/tmp/.Xauthority" "$@"

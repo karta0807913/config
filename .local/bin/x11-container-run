@@ -1,0 +1,13 @@
+#!/bin/sh
+
+CONTAINERD=""
+if which podman 2>/dev/null > /dev/null; then
+    CONTAINERD="podman"
+elif which docker 2>/dev/null > /dev/null; then
+    CONTAINERD="docker"
+else
+    echo "no container manager found"
+    exit 127
+fi
+
+${CONTAINERD} run -e "DISPLAY=$DISPLAY" -e "XAUTHORITY=/tmp/.Xauthority" -v "/tmp/.X11-unix:/tmp/.X11-unix:rw" -v "$XAUTHORITY:/tmp/.Xauthority" "$@"

@@ -128,6 +128,7 @@ case "$IMAGE_VERSION" in
         ;;
     flutter)
         IMAGE_VERSION="flutter"
+        DOCKER_OPTS="${DOCKER_OPTS}-v /dev/kvm:/dev/kvm "
         ;;
     java)
         IMAGE_VERSION="java"
