@@ -89,7 +89,7 @@ cd /tmp/config
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 cp -R .vimrc .bashrc .local .config .profile .Xmodmap .xprofile .xinputrc ~/
-mkdir .local/wallpaper
+mkdir ~/.local/wallpaper
 cd -
 
 git clone --depth 1 https://github.com/karta0807913/emacs.d.git ~/.emacs.d
