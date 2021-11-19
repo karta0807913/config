@@ -49,7 +49,7 @@ podman rm -f polybar || echo "no polybar found"
 
 podman run --name polybar ubuntu:20.04 bash -c "
 apt-get update;
-DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential git cmake cmake-data pkg-config python3-sphinx python3-packaging libcairo2-dev libxcb1-dev libxcb-util0-dev libxcb-randr0-dev libxcb-composite0-dev python3-xcbgen xcb-proto libxcb-image0-dev libxcb-ewmh-dev libxcb-icccm4-dev gcc g++ make libxcb-xkb-dev libxcb-xrm-dev libxcb-cursor-dev libasound2-dev libpulse-dev i3-wm libjsoncpp-dev libmpdclient-dev libcurl4-openssl-dev libnl-genl-3-dev;
+DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential git cmake cmake-data pkg-config python3-sphinx python3-packaging libcairo2-dev libxcb1-dev libxcb-util0-dev libxcb-randr0-dev libxcb-composite0-dev python3-xcbgen xcb-proto libxcb-image0-dev libxcb-ewmh-dev libxcb-icccm4-dev gcc g++ make libxcb-xkb-dev libxcb-xrm-dev libxcb-cursor-dev libasound2-dev libpulse-dev libuv1-dev i3-wm libjsoncpp-dev libmpdclient-dev libcurl4-openssl-dev libnl-genl-3-dev;
 git clone --recursive --depth 1 https://github.com/polybar/polybar.git
 cd polybar;
 mkdir build
@@ -92,7 +92,7 @@ cp -R .vimrc .bashrc .local .config .profile .Xmodmap .xprofile .xinputrc ~/
 mkdir .local/wallpaper
 cd -
 
-git clone https://github.com/karta0807913/emacs.d.git ~/.emacs.d
+git clone --depth 1 https://github.com/karta0807913/emacs.d.git ~/.emacs.d
 cp ~/.emacs.d/.custom.el ~/
 
 if ! [ -f "/tmp/CascadiaCode.zip" ]; then
