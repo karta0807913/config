@@ -81,6 +81,8 @@ cd /tmp/st
 sudo apt install -y libharfbuzz-dev libx11-dev libxft-dev
 make all
 cp ./st ~/.local/bin
+# enable the delete key
+echo "set enable-keypad on" >> ~/.inputrc
 cd -
 
 git clone --depth 1 https://github.com/karta0807913/config.git /tmp/config
