@@ -4,7 +4,7 @@ set -e
 
 IFS=$'\n';
 POD_INFO=""
-for line in $(podman ps -a --format '{{ .Names }} {{ .Status }}'); 
+for line in $(podman ps -a --sort status --format '{{ .Names }} {{ .Status }}' | tac); 
 do
     IFS=' ';
     read Name Status <<<"$line";
@@ -16,13 +16,16 @@ do
     fi
 done
 
+# remove the new line at the end
+POD_INFO="$(echo "${POD_INFO}" | head -c -1)"
+
 CONTAINER_NAME="$(echo "$POD_INFO" | rofi -no-custom -dmenu -i -p "🐳Docker" -location 2 -width 40 -lines 10 -markup-rows | cut -c7- | awk 'BEGIN { FS="<" } /span/{ print $1 }')"
 
 [ -z "$CONTAINER_NAME" ] && exit 1
 
 notify-send "🐳 container $CONTAINER_NAME info" "$(podman inspect --format \
-"<div>HostName:{{ .Config.Hostname }}</div>
-<div>Image:{{ .Config.Image }}</div>
+"<div>HostName: {{ .Config.Hostname }}</div>
+<div>Image: {{ .Config.Image }}</div>
 <div>Command: {{ index .Config.Cmd 0 }}</div>
-<div>IP:{{ .NetworkSettings.IPAddress }}</div>" "$CONTAINER_NAME")"
+<div>IP: {{ range .NetworkSettings.Networks }}{{ .IPAddress }}; {{ end }}</div>" "$CONTAINER_NAME")"
 

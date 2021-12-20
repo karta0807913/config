@@ -23,6 +23,7 @@ IMAGE_NAME="localhost/my_editor"
 IMAGE_VERSION="base"
 CONTAINER_NAME=""
 WORKING_DIR=""
+NETWORK_NAME="podman"
 
 function add_folder() {
     if ! readlink -f "$1" >/dev/null 2>/dev/null; then
@@ -51,7 +52,7 @@ function build_editor_image() {
     dockerpath="$HOME/.emacs.d/docker/Dockerfile.$version"
     if [ "$version" = "base" ]; then
         dockerpath="$HOME/.emacs.d/Dockerfile"
-    elif ! check_image_exists "${IMAGE_NAME}" "base"; then
+    elif ! check_image_exists "${IMAGE_NAME}:base"; then
         build_editor_image "${IMAGE_NAME}" "base";
     fi
     ${CONTAINERD} build -t "$name:$version" -f "$dockerpath" "$HOME/.emacs.d/"
@@ -75,6 +76,11 @@ do
         -t|--type)
             shift
             IMAGE_VERSION="$1"
+            shift
+            ;;
+        --network)
+            shift
+            NETWORK_NAME="$1"
             shift
             ;;
         -x11)
@@ -151,13 +157,20 @@ if ! [ "${WORKING_DIR}" = "" ]; then
     DOCKER_OPTS="${DOCKER_OPTS} -w ${WORKING_DIR}"
 fi
 
+# if ssh-agent exists
+if [ -S ~/.local/ssh-agent ]; then
+    DOCKER_OPTS="${DOCKER_OPTS} -v ${HOME}/.local/ssh-agent:/tmp/ssh/ssh-agent"
+    DOCKER_OPTS="${DOCKER_OPTS} -e SSH_AUTH_SOCK=/tmp/ssh/ssh-agent"
+fi
+
+# if tabnine exists
 if [ -d ~/.config/TabNine ]; then
-    DOCKER_OPTS="${DOCKER_OPTS} -v ${HOME}/.config/TabNine:/home/code/.config/TabNine"
+    DOCKER_OPTS="${DOCKER_OPTS} -v ${HOME}/.config/TabNine:/home/code/.config/TabNine "
 fi
 
 case "${CONTAINERD}" in
     docker)
-        if docker run -it ${DOCKER_OPTS} -d -u "$(id -u):$(id -g)" --name "${CONTAINER_NAME}" "${IMAGE_NAME}:${IMAGE_VERSION}"; then
+        if docker run -it ${DOCKER_OPTS} -d -u "$(id -u):$(id -g)" --network="${NETWORK_NAME}" --name "${CONTAINER_NAME}" "${IMAGE_NAME}:${IMAGE_VERSION}"; then
             // setup user and group name.
             docker exec -u root "${CONTAINER_NAME}" groupadd --gid "$(id -g)" "$(getent group $(id -g) | cut -d: -f1)"
             docker exec -u root "${CONTAINER_NAME}" useradd --uid $UID --gid "$(id -g)" "$(whoami)"
@@ -173,6 +186,11 @@ case "${CONTAINERD}" in
         docker attach "${CONTAINER_NAME}"
         ;;
     podman)
-        podman run -i -t ${DOCKER_OPTS} --name "${CONTAINER_NAME}" "${IMAGE_NAME}:${IMAGE_VERSION}";
+        if podman run -i -d -t ${DOCKER_OPTS} --network="${NETWORK_NAME}" --name "${CONTAINER_NAME}" "${IMAGE_NAME}:${IMAGE_VERSION}"; then
+            if [ -f ~/.gitconfig ]; then
+                cat ~/.gitconfig | podman exec -i "${CONTAINER_NAME}" sh -c 'cat > ~/.gitconfig' >/dev/null
+            fi
+        fi
+        podman attach "${CONTAINER_NAME}"
         ;;
 esac
