@@ -182,13 +182,9 @@ function umount() {
     esac
 }
 
-error_message=""
+action="mount"
 if [ "$1" = "-u" ]; then
-    error_message="$(umount 2>&1 > /dev/null)"
-else
-    error_message="$(mount 2>&1 > /dev/null)"
+    action="umount"
 fi
 
-if ! [ "${error_message}" = "" ]; then
-    notify-send "Error" "${error_message}"
-fi
+${action} 2>&1 > /dev/null | xargs -d '\n' -r -n 1 notify-send "Error"
