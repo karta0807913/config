@@ -30,7 +30,10 @@ function list_mounted_partitions() {
 }
 
 function format_partition_string() {
-    partitions="$(xargs -n 1 basename</dev/stdin)"
+    partitions="$(xargs -r -n 1 basename</dev/stdin)"
+    if [ "${partitions}" = "" ]; then
+        return
+    fi
     regex=""
     for partition in ${partitions};
     do
@@ -53,7 +56,7 @@ function list_mountable_partitions() {
     {
         echo "${partitions}"
         echo "${mounted}"
-    } | sort | uniq -u | xargs -n 1 basename | format_partition_string
+    } | sort | uniq -u | xargs -r -n 1 basename | format_partition_string
 }
 
 function list_mountable_android() {
