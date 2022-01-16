@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 CONTAINERD=""
 if which podman 2>/dev/null > /dev/null; then
     CONTAINERD="podman"
@@ -9,5 +11,33 @@ else
     echo "no container manager found"
     exit 127
 fi
+
+PULSEAUDIO_PATH="${XDG_RUNTIME_DIR}/pulse"
+PULSEAUDIO_SOCKET_PATH="${PULSEAUDIO_PATH}/native"
+PULSEAUDIO_PID_PATH="${PULSEAUDIO_PATH}/pid"
+
+for option in "$@"; do
+    case "$option" in
+        --audio)
+            if ! [ -S "${PULSEAUDIO_SOCKET_PATH}" ]; then
+                rm -rf "${PULSEAUDIO_SOCKET_PATH}"
+                mkdir -p "$(dirname ${PULSEAUDIO_SOCKET_PATH})"
+                pactl load-module module-native-protocol-unix socket="${PULSEAUDIO_SOCKET_PATH}"
+            fi
+            if ! [ -f "${PULSEAUDIO_PID_PATH}" ]; then
+                echo $RANDOM > "${PULSEAUDIO_PID_PATH}"
+            fi
+            set -- "$@" "-v"
+            set -- "$@" "${PULSEAUDIO_SOCKET_PATH}:/var/run/pulse/native:rw"
+
+            set -- "$@" "-v"
+            set -- "$@" "${PULSEAUDIO_PID_PATH}:/var/run/pulse/pid:ro"
+            ;;
+        *)
+            set -- "$@" "$option"
+            ;;
+    esac
+    shift
+done
 
 ${CONTAINERD} run -e "DISPLAY=$DISPLAY" -e "XAUTHORITY=/tmp/.Xauthority" -v "/tmp/.X11-unix:/tmp/.X11-unix:rw" -v "$XAUTHORITY:/tmp/.Xauthority" "$@"
