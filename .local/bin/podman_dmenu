@@ -8,8 +8,13 @@ function podman_start() {
 (start && exec -it)
 (start -ia && exec -it)"
 
-    CONTAINER_NAME="$(podman container ls -a --sort runningfor --format '{{ .Names }} ({{ .Status }})' | tac | rofi -dmenu -no-custom -i -p "Select container")"
-    echo "$CONTAINER_NAME"
+    CONTAINER_NAME="$(podman container ls -a --sort runningfor --format '{{ .Names }} ({{ .Status }})' | tac)"
+    # Prevent rofi block inputs from user.
+    #   Sometimes, the podman will stuck(especially the first time).
+    #   And the rofi will block all inputs from the x11.
+    #   So, we have to split the command into two pipe to make sure user's input can pass to the i3.
+    CONTAINER_NAME="$(echo "$CONTAINER_NAME" | rofi -dmenu -no-custom -i -p "Select container")"
+    echo "${CONTAINER_NAME}"
 
     read <<< "$CONTAINER_NAME" CONTAINER_NAME STAT
     STAT="$(cut -c2-3 <<< "$STAT")"
