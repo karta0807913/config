@@ -116,13 +116,4 @@ if ! shopt -oq posix; then
   fi
 fi
 
-function podman() {
-    if [ "$1" = "run" ]; then
-        shift
-        command podman run --network=podman "$@"
-        return $?
-    fi
-    command podman "$@"
-}
-
 set -o vi
