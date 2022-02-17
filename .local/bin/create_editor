@@ -140,8 +140,10 @@ case "$IMAGE_VERSION" in
         IMAGE_VERSION="java"
         ;;
     *)
-        echo "except type in base, node, nodejs, latex, golang, flutter, clang and gcc, but get $IMAGE_VERSION"
-        exit 1
+        if ! podman image inspect "${IMAGE_NAME}:${IMAGE_VERSION}" > /dev/null 2>&1; then
+            echo "${IMAGE_NAME}:${IMAGE_VERSION} not found"
+            exit 1
+        fi
 esac
 
 if ! check_image_exists "$IMAGE_NAME:$IMAGE_VERSION"; then
@@ -167,6 +169,8 @@ fi
 if [ -d ~/.config/TabNine ]; then
     DOCKER_OPTS="${DOCKER_OPTS} -v ${HOME}/.config/TabNine:/home/code/.config/TabNine "
 fi
+# --security-opt=seccomp=unconfined option for allow running the debug tools (like ptrace)
+DOCKER_OPTS="${DOCKER_OPTS} --security-opt=seccomp=unconfined "
 
 case "${CONTAINERD}" in
     docker)
