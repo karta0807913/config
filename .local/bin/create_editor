@@ -23,7 +23,6 @@ IMAGE_NAME="localhost/my_editor"
 IMAGE_VERSION="base"
 CONTAINER_NAME=""
 WORKING_DIR=""
-NETWORK_NAME="podman"
 
 function add_folder() {
     if ! readlink -f "$1" >/dev/null 2>/dev/null; then
@@ -76,11 +75,6 @@ do
         -t|--type)
             shift
             IMAGE_VERSION="$1"
-            shift
-            ;;
-        --network)
-            shift
-            NETWORK_NAME="$1"
             shift
             ;;
         -x11)
@@ -174,7 +168,7 @@ DOCKER_OPTS="${DOCKER_OPTS} --security-opt=seccomp=unconfined "
 
 case "${CONTAINERD}" in
     docker)
-        if docker run -it ${DOCKER_OPTS} -d -u "$(id -u):$(id -g)" --network="${NETWORK_NAME}" --name "${CONTAINER_NAME}" "${IMAGE_NAME}:${IMAGE_VERSION}"; then
+        if docker run -it ${DOCKER_OPTS} -d -u "$(id -u):$(id -g)" --name "${CONTAINER_NAME}" "${IMAGE_NAME}:${IMAGE_VERSION}"; then
             // setup user and group name.
             docker exec -u root "${CONTAINER_NAME}" groupadd --gid "$(id -g)" "$(getent group $(id -g) | cut -d: -f1)"
             docker exec -u root "${CONTAINER_NAME}" useradd --uid $UID --gid "$(id -g)" "$(whoami)"
@@ -190,7 +184,7 @@ case "${CONTAINERD}" in
         docker attach "${CONTAINER_NAME}"
         ;;
     podman)
-        if podman run -i -d -t ${DOCKER_OPTS} --network="${NETWORK_NAME}" --name "${CONTAINER_NAME}" "${IMAGE_NAME}:${IMAGE_VERSION}"; then
+        if podman run -i -d -t ${DOCKER_OPTS} --name "${CONTAINER_NAME}" "${IMAGE_NAME}:${IMAGE_VERSION}"; then
             if [ -f ~/.gitconfig ]; then
                 cat ~/.gitconfig | podman exec -i "${CONTAINER_NAME}" sh -c 'cat > ~/.gitconfig' >/dev/null
             fi
