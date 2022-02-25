@@ -27,8 +27,7 @@ function get_brightless() {
     xrandr --verbose | grep "$1" -A 10 | grep "Brightness" | awk '{ print $2 }'
 }
 
-while key=$(acpi_listen -c 1); do
-    read instruction others <<<"$key"
+acpi_listen | while read -r instruction others; do
     case "$instruction" in
         button/lid)
             read device action <<<"$others"
