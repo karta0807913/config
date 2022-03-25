@@ -14,6 +14,7 @@ function poweroff() {
 function lock() {
     playerctl pause > /dev/null 2>/dev/null
     i3lock -e -f -c 000000 2>/dev/null -n
+    while read -r -t 0; do read -r; done;
 }
 
 function current_screen() {
