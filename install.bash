@@ -70,7 +70,7 @@ curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb >
 sudo apt update
 sudo apt install -y i3-gaps-wm feh maim htop /tmp/chrome.deb emacs27 font-manager playerctl rofi python3-pip numlockx xclip ibus-chewing dunst i3lock vim libxcb-damage0 libconfig9 libxcb-composite0 libjsoncpp1 libxcb-composite0 libjsoncpp1 libmpdclient2 libnl-genl-3-200 python3-pip git make gcc g++ unzip acpid
 # the fonts for st terminal
-sudo apt install -y fonts-linuxlibertine fonts-inconsolata fonts-inconsolata fonts-emojione fonts-symbola
+sudo apt install -y fonts-linuxlibertine fonts-inconsolata fonts-inconsolata fonts-emojione fonts-symbola byzanz
 
 sudo ln -f "$(which python3)" "$(dirname $(which python3))/python"
 
