@@ -131,8 +131,7 @@ bar-volume-empty-foreground = ${colors.foreground-alt}
 [module/screen-recorder]
 type = custom/ipc
 hook-0 = ~/.local/bin/statusbar/screen_gif
-hook-1 = BLOCK_BUTTON=1 ~/.local/bin/statusbar/screen_gif
-click-left = polybar-msg -p %pid% hook screen-recorder 2
+click-left = polybar-msg -p %pid% action screen-recorder send "$(BLOCK_BUTTON=1 ~/.local/bin/statusbar/screen_gif)"
 initial = 1
 
 [module/disk]
