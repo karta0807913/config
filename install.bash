@@ -60,6 +60,7 @@ make -j$(nproc)
 make install"
 
 podman cp polybar:/usr/local/bin/polybar ~/.local/bin
+podman cp polybar:/usr/local/bin/polybar-msg ~/.local/bin
 
 podman rm -f polybar;
 
