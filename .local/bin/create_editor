@@ -81,6 +81,7 @@ do
             if [ "$X11" = "OFF" ]; then
                 X11="ON"
                 DOCKER_OPTS="${DOCKER_OPTS} -e DISPLAY=$DISPLAY -e XAUTHORITY=/tmp/.Xauthority -v /tmp/.X11-unix:/tmp/.X11-unix:rw -v $XAUTHORITY:/tmp/.Xauthority "
+                DOCKER_OPTS="${DOCKER_OPTS} -e GTK_IM_MODULE=$GTK_IM_MODULE -e QT4_IM_MODULE=$QT4_IM_MODULE -e QT_IM_MODULE=$QT_IM_MODULE -e XMODIFIERS=$XMODIFIERS "
             fi
             shift
             continue
