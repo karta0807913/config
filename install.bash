@@ -36,7 +36,7 @@ fi
 sudo add-apt-repository -y ppa:kelleyk/emacs
 curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb > /tmp/chrome.deb
 sudo apt update
-sudo apt install -y i3-wm feh maim htop /tmp/chrome.deb emacs27 playerctl rofi python3-pip numlockx xclip ibus-chewing dunst i3lock vim python3-pip git unzip acpid polybar picom libxcb-dpms0
+sudo apt install -y i3-wm feh maim htop /tmp/chrome.deb emacs28 playerctl rofi python3-pip numlockx xclip ibus-chewing dunst i3lock vim python3-pip git unzip acpid polybar picom libxcb-dpms0
 # the fonts for st terminal
 sudo apt install -y fonts-linuxlibertine fonts-inconsolata fonts-inconsolata fonts-emojione fonts-symbola byzanz
 
@@ -112,8 +112,9 @@ podman cp polybar:/usr/bin/polybar-msg ~/.local/bin
 podman rm -f polybar;
 
 # compile st
-podman run --name polybar ubuntu:22.04 bash -c "
-sudo apt install -y libharfbuzz-dev libx11-dev libxft-dev gcc make git
+podman rm -f st;
+podman run --name st ubuntu:22.04 bash -c "
+apt update && apt install -y libharfbuzz-dev libx11-dev libxft-dev gcc make git
 git clone --depth 1 https://github.com/karta0807913/st /tmp/st
 cd /tmp/st
 make all
@@ -123,6 +124,7 @@ cd -
 "
 echo "set enable-keypad on" >> ~/.inputrc
 podman cp st:/tmp/st/st ~/.local/bin/
+podman rm -f st;
 
 git clone --depth 1 https://github.com/karta0807913/config.git /tmp/config
 cd /tmp/config
