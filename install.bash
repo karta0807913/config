@@ -152,6 +152,7 @@ fc-cache -f -v
 dconf load /org/gnome/terminal/legacy/profiles:/ < /tmp/config/gnome-terminal-profiles.dconf
 # hide menubar
 gsettings set org.gnome.Terminal.Legacy.Settings default-show-menubar false
+sudo cp 60-custom.quirks /usr/share/libinput/60-custom.quirks
 
 # add i3 configure
 # cat<<EOF | sudo tee /usr/share/xsessions/i3.desktop
