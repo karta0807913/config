@@ -1,0 +1,4 @@
+[Serial Keyboards]
+MatchUdevType=keyboard
+MatchName=HHKB-Hybrid_2 Keyboard
+AttrKeyboardIntegration=internal
