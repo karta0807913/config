@@ -17,7 +17,7 @@ else
 fi
 
 X11="OFF"
-DOCKER_OPTS=""
+DOCKER_OPTS="-v $HOME/.emacs.d/eln-cache:/home/code/.emacs.d/eln-cache "
 IS_OPTIONS=false
 IMAGE_NAME="localhost/my_editor"
 IMAGE_VERSION="base"
