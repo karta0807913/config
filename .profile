@@ -21,9 +21,19 @@ if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
 
-# startup ssh-agent for emacs continers
-ssh-agent -a $HOME/.local/ssh-agent
-SSH_AUTH_SOCK=$HOME/.local/ssh-agent ssh-add
+SSH_AUTH_SOCK=$HOME/.local/ssh-agent ssh-add -l 2>/dev/null >&2
+if [ "$?" = "2" ]; then
+    rm $HOME/.local/ssh-agent 2>/dev/null >&2;
+    # startup ssh-agent for emacs continers
+    ssh-agent -a $HOME/.local/ssh-agent
+    SSH_AUTH_SOCK=$HOME/.local/ssh-agent ssh-add 2>/dev/null
+fi
+
+
+if [ -z "$SSH_AUTH_SOCK" ]; then
+    export SSH_AUTH_SOCK;
+    export SSH_AGENT_PID;
+fi
 
 export FILE="nnn"
 export EDITOR="vim"
