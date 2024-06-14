@@ -121,10 +121,21 @@ make all
 cp ./st ~/.local/bin
 # enable the delete key
 cd -
-"
+";
 echo "set enable-keypad on" >> ~/.inputrc
 podman cp st:/tmp/st/st ~/.local/bin/
 podman rm -f st;
+
+podman rm -f alacritty;
+podman run --name alacritty docker.io/rust:1.78-buster bash -c "
+set -e;
+git clone --depth 1 -b v0.13.2 https://github.com/alacritty/alacritty.git;
+cd alacritty;
+apt-get update && apt-get install cmake pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev python3;
+cargo build --release;
+";
+podman cp alacritty:/alacritty/alacritty ~/.local/bin/
+podman rm -f alacritty;
 
 git clone --depth 1 https://github.com/karta0807913/config.git /tmp/config
 cd /tmp/config

@@ -1,0 +1,29 @@
+[font]
+size = 8
+normal = { family = "Cascadia Code", style = "Regular" }
+
+[window]
+opacity = 0.65
+
+[cursor]
+vi_mode_style = { shape = "Block", blinking = "Always" }
+
+[colors]
+primary.background = "#323232"
+primary.foreground = "#dddddd"
+normal.black       = "#323232"
+normal.red         = "#D25252"
+normal.green       = "#7FE173"
+normal.yellow      = "#FFC66D"
+normal.blue        = "#4099FF"
+normal.magenta     = "#F680FF"
+normal.cyan        = "#BED6FF"
+normal.white       = "#EEEEEC"
+bright.black       = "#535353"
+bright.red         = "#F07070"
+bright.green       = "#9DFF91"
+bright.yellow      = "#FFE48B"
+bright.blue        = "#5EB7F7"
+bright.magenta     = "#FF9DFF"
+bright.cyan        = "#DCF4FF"
+bright.white       = "#FFFFFF"
