@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [ "$XDG_SESSION_TYPE" = "x11" ]; then
+    maim -o --select | xclip -selection clipboard -t image/png
+elif [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+    grim -g "$(slurp)" - | xcclb
+fi

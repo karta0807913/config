@@ -3,7 +3,11 @@
 # output
 if [ "$1" == "-o" ];
 then
-    xclip -selection clipboard -o
+    if [ "$XDG_SESSION_TYPE" = "x11" ]; then 
+        xclip -selection clipboard -o
+    elif [ "$XDG_SESSION_TYPE" = "wayland" ]; then 
+        wl-paste
+    fi
     exit 0
 fi
 
@@ -14,4 +18,8 @@ then
     replace=" \\"$'\n'
     input=${input//$'\n'/$replace}
 fi
-echo -n "$input" | xclip -selection clipboard
+if [ "$XDG_SESSION_TYPE" = "x11" ]; then
+    echo -n "$input" | xclip -selection clipboard
+elif [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+    echo -n "$input" | wl-copy;
+fi

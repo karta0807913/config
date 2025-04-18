@@ -1,5 +1,5 @@
 #!/bin/bash
-set +e
+set -e
 
 if [ "$(uname -m)" != "x86_64" ]; then
     echo "this script only support x86_64 :<"
@@ -15,38 +15,27 @@ sudo apt-get update
 sudo apt-get install -y software-properties-common
 
 if ! which podman > /dev/null 2>/dev/null ; then
-    set -e
-    sudo mkdir -p /etc/apt/keyrings
-    curl -fsSL https://download.opensuse.org/repositories/devel:kubic:libcontainers:unstable/xUbuntu_$(lsb_release -rs)/Release.key \
-      | gpg --dearmor \
-      | sudo tee /etc/apt/keyrings/devel_kubic_libcontainers_unstable.gpg > /dev/null
-    echo \
-      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/devel_kubic_libcontainers_unstable.gpg]\
-        https://download.opensuse.org/repositories/devel:kubic:libcontainers:unstable/xUbuntu_$(lsb_release -rs)/ /" \
-      | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:unstable.list > /dev/null
     sudo apt-get update
     sudo apt-get -y install podman
-    set +e
 fi
 
 if ! podman network inspect podman >/dev/null 2>/dev/null; then
     podman create network podman
 fi
 
-sudo add-apt-repository -y ppa:kelleyk/emacs
 curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb > /tmp/chrome.deb
 sudo apt update
-sudo apt install -y i3-wm feh maim htop /tmp/chrome.deb emacs28 playerctl rofi python3-pip numlockx xclip ibus-chewing dunst i3lock vim python3-pip git unzip acpid polybar picom libxcb-dpms0
+sudo apt install -y i3-wm feh maim htop /tmp/chrome.deb emacs playerctl rofi python3-pip numlockx xclip ibus-chewing dunst i3lock vim python3-pip git unzip acpid polybar picom libxcb-dpms0 sway 
 # the fonts for st terminal
 sudo apt install -y fonts-linuxlibertine fonts-inconsolata fonts-inconsolata fonts-emojione fonts-symbola byzanz
 
 sudo ln -f "$(which python3)" "$(dirname $(which python3))/python"
 
-pip3 install dbus-python
+pip3 install dbus-python --break-system-packages
 
 podman rm -f i3 || echo ""
 
-podman run --name i3 ubuntu:22.04 bash -c "
+podman run --name i3 ubuntu:24.04 bash -c "
 apt-get update;
 DEBIAN_FRONTEND=noninteractive apt-get install -y gcc meson pkg-config libstartup-notification0-dev libxcb1-dev libxcb-xkb-dev libxcb-randr0-dev libxcb-shape0-dev libxcb-util-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-icccm4-dev libxcb-xrm-dev libxkbcommon-dev libxkbcommon-x11-dev libyajl-dev libxkbcommon-x11-dev libpcre2-dev  libcairo2-dev libpango1.0-dev libglib2.0-dev libev-dev asciidoc-base ninja-build wget xz-utils libxcb-xinerama0-dev;
 wget https://i3wm.org/downloads/i3-4.22.tar.xz;
@@ -78,13 +67,13 @@ podman rm -f i3;
 
 podman rm -f picom || echo "no picon found"
 
-podman run --name picom ubuntu:22.04 bash -c "
+podman run --name picom ubuntu:24.04 bash -c "
 apt-get update;
-DEBIAN_FRONTEND=noninteractive apt-get install -y git gcc g++ libxext-dev libxcb1-dev libxcb-damage0-dev libxcb-dpms0-dev libxcb-xfixes0-dev libxcb-shape0-dev libxcb-render-util0-dev libxcb-render0-dev libxcb-randr0-dev libxcb-composite0-dev libxcb-image0-dev libxcb-present-dev libxcb-xinerama0-dev libxcb-glx0-dev libpixman-1-dev libdbus-1-dev libconfig-dev libgl-dev libegl-dev libpcre2-dev libevdev-dev uthash-dev libev-dev libx11-xcb-dev meson;
+DEBIAN_FRONTEND=noninteractive apt-get install -y cmake g++ gcc git libconfig-dev libdbus-1-dev libegl-dev libepoxy-dev libev-dev libevdev-dev libgl-dev libpcre2-dev libpixman-1-dev libx11-xcb-dev libxcb1-dev libxcb-composite0-dev libxcb-damage0-dev libxcb-dpms0-dev libxcb-glx0-dev libxcb-image0-dev libxcb-present-dev libxcb-randr0-dev libxcb-render0-dev libxcb-render-util0-dev libxcb-shape0-dev libxcb-util-dev libxcb-xfixes0-dev libxcb-xinerama0-dev libxext-dev meson ninja-build uthash-dev;
 git clone --depth 1 https://github.com/yshui/picom;
 cd picom;
 git submodule update --init --recursive;
-meson --buildtype=release . build;
+meson setup --buildtype=release build;
 ninja -C build;"
 
 mkdir -p ~/.local/bin
@@ -94,7 +83,7 @@ podman rm -f picom;
 
 podman rm -f polybar || echo "no polybar found"
 
-podman run --name polybar ubuntu:22.04 bash -c "
+podman run --name polybar ubuntu:24.04 bash -c "
 apt-get update;
 DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential git cmake cmake-data pkg-config python3-sphinx python3-packaging libcairo2-dev libxcb1-dev libxcb-util0-dev libxcb-randr0-dev libxcb-composite0-dev python3-xcbgen xcb-proto libxcb-image0-dev libxcb-ewmh-dev libxcb-icccm4-dev gcc g++ make libxcb-xkb-dev libxcb-xrm-dev libxcb-cursor-dev libasound2-dev libpulse-dev libuv1-dev i3-wm libjsoncpp-dev libmpdclient-dev libcurl4-openssl-dev libnl-genl-3-dev;
 git clone --recursive --depth 1 https://github.com/polybar/polybar.git
@@ -108,23 +97,7 @@ make install"
 
 podman cp polybar:/usr/bin/polybar ~/.local/bin
 podman cp polybar:/usr/bin/polybar-msg ~/.local/bin
-
 podman rm -f polybar;
-
-# compile st
-podman rm -f st;
-podman run --name st ubuntu:22.04 bash -c "
-apt update && apt install -y libharfbuzz-dev libx11-dev libxft-dev gcc make git
-git clone --depth 1 https://github.com/karta0807913/st /tmp/st
-cd /tmp/st
-make all
-cp ./st ~/.local/bin
-# enable the delete key
-cd -
-";
-echo "set enable-keypad on" >> ~/.inputrc
-podman cp st:/tmp/st/st ~/.local/bin/
-podman rm -f st;
 
 podman rm -f alacritty;
 podman run --name alacritty docker.io/rust:1.78-buster bash -c "
@@ -136,6 +109,23 @@ cargo build --release;
 ";
 podman cp alacritty:/alacritty/target/release/alacritty ~/.local/bin/
 podman rm -f alacritty;
+
+
+podman rm -f wl-clipboard
+podman run --name wl-clipboard bash -c "
+set -e 
+apt-get update;
+apt-get update;
+DEBIAN_FRONTEND=noninteractive apt-get install -y git meson cmake gcc g++;
+git clone --depth 1 https://github.com/bugaevc/wl-clipboard.git;
+cd wl-clipboard;
+meson setup build;
+cd build;
+ninja;
+"
+podman cp wl-clipboard:/wl-clipboard/build/src/wl-copy ~/.local/bin/;
+podman cp wl-clipboard:/wl-clipboard/build/src/wl-paste ~/.local/bin/;
+podman rm -f wl-clipboard;
 
 git clone --depth 1 https://github.com/karta0807913/config.git /tmp/config
 cd /tmp/config
@@ -165,7 +155,17 @@ dconf load /org/gnome/terminal/legacy/profiles:/ < /tmp/config/gnome-terminal-pr
 gsettings set org.gnome.Terminal.Legacy.Settings default-show-menubar false
 sudo cp 60-custom.quirks /usr/share/libinput/60-custom.quirks
 
-# add i3 configure
+# change sway config
+cat <<'EOF' | sudo tee /usr/share/wayland-sessions/sway.desktop
+[Desktop Entry]
+Name=Sway
+Comment=An i3-compatible Wayland compositor
+Exec=/bin/bash -l -c 'sway'
+Type=Application
+DesktopNames=sway
+EOF
+
+# add i3 config
 # cat<<EOF | sudo tee /usr/share/xsessions/i3.desktop
 # [Desktop Entry]
 # Name=i3
