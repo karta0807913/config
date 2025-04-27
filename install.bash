@@ -25,7 +25,7 @@ fi
 
 curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb > /tmp/chrome.deb
 sudo apt update
-sudo apt install -y i3-wm feh maim htop /tmp/chrome.deb emacs playerctl rofi python3-pip numlockx xclip ibus-chewing dunst i3lock vim python3-pip git unzip acpid polybar picom libxcb-dpms0 sway 
+sudo apt install -y i3-wm feh maim htop /tmp/chrome.deb emacs playerctl rofi python3-pip numlockx xclip ibus-chewing dunst i3lock vim python3-pip git unzip acpid polybar picom libxcb-dpms0 sway pulseaudio-utils wl-clickboard slop grim
 # the fonts for st terminal
 sudo apt install -y fonts-linuxlibertine fonts-inconsolata fonts-inconsolata fonts-emojione fonts-symbola byzanz
 
@@ -114,7 +114,6 @@ podman rm -f alacritty;
 podman rm -f wl-clipboard
 podman run --name wl-clipboard bash -c "
 set -e 
-apt-get update;
 apt-get update;
 DEBIAN_FRONTEND=noninteractive apt-get install -y git meson cmake gcc g++;
 git clone --depth 1 https://github.com/bugaevc/wl-clipboard.git;

@@ -19,6 +19,8 @@ set $reboot sudo -A reboot
 set $netrefresh --no-startup-id sudo -A systemctl restart NetworkManager
 set $hibernate sudo -A systemctl suspend
 
+exec dbus-update-activation-environment --systemd SWAYSOCK WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE
+
 output * background /home/jason/.local/wallpaper/background fill
 
 # #---Dropdown Windows---# #
@@ -42,6 +44,7 @@ for_window [instance="dropdown_*"] move position center
 exec_always dunst
 # Composite manager:
 exec_always [ "$XDG_SESSION_TYPE" = "x11" ] && picom
+exec_always ! [ "$XDG_SESSION_TYPE" = "x11" ] && fcitx5 -r
 # exec_always random_wrapper
 # numlock
 exec --no-startup-id numlockx on
@@ -135,8 +138,8 @@ bindsym $mod+Shift+l            move right 30
 bindsym $mod+z                  gaps outer current plus 5
 bindsym $mod+Shift+z            gaps outer current minus 5
 
-bindsym $mod+x                  exec --no-startup-id playerctl pause; exec --no-startup-id i3lock -e -f -c 000000
-bindsym $mod+Shift+x            exec --no-startup-id i3lock -e -f -c 000000
+bindsym $mod+x                  exec --no-startup-id playerctl pause; exec --no-startup-id $(echo ${XDG_SESSION_DESKTOP}lock) -e -f -c 000000
+bindsym $mod+Shift+x            exec --no-startup-id $(echo ${XDG_SESSION_DESKTOP}lock) -e -f -c 000000
 
 bindsym $mod+c                  exec --no-startup-id podman_info
 bindsym $mod+Shift+c            exec --no-startup-id podman_dmenu
@@ -339,4 +342,8 @@ bindsym XF86Documents           exec $terminal -e $FILE ~/Documents
 ##bindsym XF86Bluetooth         exec
 bindsym XF86WLAN                exec $netrefresh
 ## switch the ibus input engine
-bindsym control+space           exec --no-startup-id toggle-input
+# bindsym control+space           exec --no-startup-id toggle-input
+
+input type:touchpad {
+    tap enabled
+}

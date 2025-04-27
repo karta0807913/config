@@ -1,0 +1,71 @@
+{
+
+    "layer": "top",
+    "position": "top",
+    "height": 27,
+    "spacing": 0,
+    "margin-top": 0,
+    "margin-bottom": 0,
+    "modules-left":["sway/workspaces", "sway/mode"],
+    "modules-center": ["clock"],
+    "modules-right":["memory", "cpu", "pulseaudio","pulseaudio/slider", "custom/disk", "battery", "custom/acpi"],
+
+    "sway/mode": {
+        "format": "<span style=\"italic\">{}</span>"
+    },
+
+    "clock": {
+        "interval": 1,
+        "format": "📅{:%Y/%m/%d (%a) %I:%M%p}"
+    },
+
+    "memory": {
+        "interval": 3,
+        "format": "RAM {percentage}%"
+    },
+
+    "cpu": {
+        "interval": 1,
+        "format": "💻cpu {usage}%"
+    },
+
+    "pulseaudio": {
+        "format-muted": "🔇 muted",
+        "format": "🔊{volume}%"
+    },
+    "pulseaudio/slider": {
+        "min": 0,
+        "max": 100,
+        "orientation": "horizontal"
+    },
+    "custom/disk": {
+        "exec": "~/.local/bin/statusbar/disk",
+        "format": "🏠HOME{}",
+        "interval": 60
+    },
+    "custom/acpi": {
+        "exec": "~/.local/bin/statusbar/acpi_client"
+    },
+    "battery": {
+        "design-capacity": false,
+        "states": {
+            "full": 100,
+            "80": 80,
+            "60": 60,
+            "40": 40,
+            "20": 20,
+            "10": 10,
+        },
+        "interval": 5,
+        "format-full": "⚡Full",
+        "format-time": "{H}:{M}",
+        "format-discharging-10": "🪫<span color=\"red;\">█▁▁▁▁</span> {time} left",
+        "format-discharging-20": "🪫<span color=\"red;\">██▁▁▁</span>",
+        "format-discharging-40": "🪫<span color=\"yellow\">██▁▁▁</span>",
+        "format-discharging-60": "🔋<span color=\"yellow\">███▁▁</span>",
+        "format-discharging-80": "🔋<span color=\"green\">████▁</span>",
+        "format-discharging-full": "🔋<span color=\"green\">█████</span>",
+
+        "format-charging": "🔌{capacity}% {time}",
+    }
+}
